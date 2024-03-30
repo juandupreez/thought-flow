@@ -1,0 +1,25 @@
+[sky]
+    -ATTR->
+        [blue]
+            -IS_A->
+                [colour]
+
+[car]
+    -ATTR->
+        [yellow]
+            -IS_A->
+                [colour]
+
+[sea]
+    -ATTR->
+        [blue]
+            -IS_A->
+                [colour]
+
+---
+
+[?]
+    -ATTR->
+        [blue]
+
+        

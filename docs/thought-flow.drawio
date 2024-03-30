@@ -1,0 +1,57 @@
+<mxfile host="Electron" modified="2024-03-27T08:08:37.093Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="dq2LuIoLFYHXfVCYCrbW" version="23.1.5" type="device">
+  <diagram name="Page-1" id="Ap36iglDWXrONA20pShd">
+    <mxGraphModel dx="1050" dy="629" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="jXbGuEhy6tejUVkO_Nuv-1" target="jXbGuEhy6tejUVkO_Nuv-12">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="175" />
+              <mxPoint x="380" y="175" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-1" value="CPU" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="90" y="120" width="230" height="410" as="geometry" />
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-2" value="Fetch -&amp;gt; &lt;br&gt;Decode -&amp;gt; &lt;br&gt;Execute &lt;br&gt;Cycle" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="145" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-4" value="Long Term Memory" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="700" y="290" width="160" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-5" value="Short Term Memory" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="510" y="290" width="160" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-8" value="Concept Data" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="740" y="350" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-9" value="Program Instruction" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="740" y="440" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-10" value="Concept Data" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="550" y="350" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-11" value="Program Instruction" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="550" y="440" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-12" value="Sensory Memory" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="120" width="120" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-14" value="Working Memory" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="330" y="290" width="160" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-15" value="Concept Data" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="370" y="350" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-16" value="Program Instruction" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="370" y="440" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="jXbGuEhy6tejUVkO_Nuv-17" value="Registers" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="295" width="180" height="195" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
