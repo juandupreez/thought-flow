@@ -6,6 +6,7 @@
     "declaration": true,
     "inlineSourceMap": true,
     "inlineSources": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "esModuleInterop": true
   }
 }

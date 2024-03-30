@@ -17,7 +17,7 @@ export class ConceptMatcher {
     getMatches (query: ConceptGraph): ConceptGraph[] {
         const matches: ConceptGraph[] = []
         const unknownConceptId: string | undefined = query.findNode((nodeId: string, attributes: Concept) => {
-            return attributes.label === 'unknown'
+            return attributes.description === 'unknown'
         })
         if (unknownConceptId === undefined) {
             return []
@@ -38,7 +38,7 @@ export class ConceptMatcher {
         alreadyProcessedQueryRelationIds: []
     }): ConceptGraph[] {
         glog().debug('>>>')
-        const debugContextLine: string = `[${query.getNodeAttributes(queryConceptId).label}]`
+        const debugContextLine: string = `[${query.getNodeAttributes(queryConceptId).description}]`
         glog().debug(debugContextLine + 'starting to process query concept ' + queryConceptId + ' : ' + JSON.stringify(query.getNodeAttributes(queryConceptId), null, 2))
         if (ctx.alreadyProcessedQueryConceptIds.includes(queryConceptId)) {
             glog().debug(debugContextLine + '\tNOT processing concept because it was already processed')
@@ -55,7 +55,7 @@ export class ConceptMatcher {
             querySourceAttributes: Concept, queryTragetAttributes: Concept
         ) => {
             if (!ctx.alreadyProcessedQueryRelationIds.includes(queryEdgeId)) {
-                glog().debug(debugContextLine + `\t\tprocessing edge: [${querySourceAttributes.label}] - ${queryEdgeAttributes.type} -> [${queryTragetAttributes.label}]`)
+                glog().debug(debugContextLine + `\t\tprocessing edge: [${querySourceAttributes.description}] - ${queryEdgeAttributes.type} -> [${queryTragetAttributes.description}]`)
                 isLeaf = false
                 // ctx.alreadyProcessedQueryRelationIds.push(queryEdgeId)
 
@@ -63,7 +63,7 @@ export class ConceptMatcher {
                 const queryNeighbourAttributes: Concept = querySourceId === queryConceptId ? queryTragetAttributes : querySourceAttributes
                 const queryNeighbourSourceOrTarget: 'source' | 'target' = querySourceId === queryConceptId ? 'target' : 'source'
 
-                glog().debug(debugContextLine + '\t\tneighbour identified as: ' + queryNeighbourAttributes.label)
+                glog().debug(debugContextLine + '\t\tneighbour identified as: ' + queryNeighbourAttributes.description)
 
                 glog().debug(debugContextLine + '\t\tquerying all db edges')
                 this.data.forEachEdge((
@@ -81,7 +81,7 @@ export class ConceptMatcher {
                     }
                     if (doesEdgeMatch && doesNeighbourIdMatch) {
                         glog().debug(debugContextLine + '\t\t\tfound matching DB edge: ')
-                        glog().debug(debugContextLine + `\t\t\t[${dataSourceAttributes.label}] - ${dataEdgeAttributes.type} -> [${dataTragetAttributes.label}]`)
+                        glog().debug(debugContextLine + `\t\t\t[${dataSourceAttributes.description}] - ${dataEdgeAttributes.type} -> [${dataTragetAttributes.description}]`)
 
                         const possibleMatch: ConceptGraph = new ConceptGraph()
                         possibleMatch.addNode(dataSourceId, { ...dataSourceAttributes, refId: dataSourceId })
@@ -106,7 +106,7 @@ export class ConceptMatcher {
 
                 })
             } else {
-                glog().debug(debugContextLine + `\t\tNOT processing edge: [${querySourceAttributes.label}] - ${queryEdgeAttributes.type} -> [${queryTragetAttributes.label}]`)
+                glog().debug(debugContextLine + `\t\tNOT processing edge: [${querySourceAttributes.description}] - ${queryEdgeAttributes.type} -> [${queryTragetAttributes.description}]`)
             }
         })
 

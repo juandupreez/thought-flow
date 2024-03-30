@@ -1,4 +1,4 @@
 export interface Concept {
-    label: string,
+    description: string,
     refId?: string
 }

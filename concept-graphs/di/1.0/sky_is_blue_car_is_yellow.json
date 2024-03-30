@@ -1,0 +1,12 @@
+{
+    "sky": {
+        "-has attribute->": "blue"
+    },
+    "car": {
+        "-has attribute->": {
+            "yellow": {
+                "-is subtype of->": "colour"
+            }
+        }
+    }
+}

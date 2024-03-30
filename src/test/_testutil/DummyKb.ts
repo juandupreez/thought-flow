@@ -29,11 +29,11 @@ export class DummyKb implements KnowledgeBase {
         const theUnknownConceptGraph: ConceptGraph = new ConceptGraph()
 
         let id: string | undefined = this.db.conceptGraph.findNode((node: string, attributes: Concept) => {
-            return attributes.label === 'unknown'
+            return attributes.description === 'unknown'
         })
         if (id === undefined) {
             console.warn('No "unknown" concept found. Creating it in KB')
-            id = this.db.conceptGraph.addNode('kb_000' + genId(), { label: 'unkown' })
+            id = this.db.conceptGraph.addNode('kb_000' + genId(), { description: 'unkown' })
         }
 
         const unknownConceptNode: Concept = this.db.conceptGraph.getNodeAttributes(id)
@@ -46,7 +46,7 @@ export class DummyKb implements KnowledgeBase {
     async findBestMatch (query: ConceptGraph): Promise<ConceptGraph> {
         const matchedConceptGraph: ConceptGraph = new ConceptGraph()
 
-        const unkownConceptId: string | undefined = query.findNode((key: string, attributes: Concept) => { return attributes.label === 'unknown' })
+        const unkownConceptId: string | undefined = query.findNode((key: string, attributes: Concept) => { return attributes.description === 'unknown' })
         if (unkownConceptId === undefined) {
             return matchedConceptGraph
         }

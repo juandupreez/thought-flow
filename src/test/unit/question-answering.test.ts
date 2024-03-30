@@ -1,15 +1,15 @@
-import { ThinkR } from "../main/ThinkR"
+import { ThinkR } from "../../main/ThinkR"
 import { instance, mock } from 'ts-mockito'
-import { KnowledgeBase } from "../main/kb/KnowledgeBase"
-import { Op } from "../main/ops/Op"
-import { HaltOp } from "../main/ops/HaltOp"
-import { DummyKb, DummyKbDb } from "./testutil/DummyKb"
+import { KnowledgeBase } from "../../main/kb/KnowledgeBase"
+import { Op } from "../../main/ops/Op"
+import { HaltOp } from "../../main/ops/HaltOp"
+import { DummyKb, DummyKbDb } from "../_testutil/DummyKb"
 import Graph from 'graphology'
-import { ConceptGraph } from "../main/concepts/ConceptGraph"
-import { OpGraph } from "../main/ops/OpGraph"
-import { Concept } from "../main/concepts/Concept"
+import { ConceptGraph } from "../../main/concepts/ConceptGraph"
+import { OpGraph } from "../../main/ops/OpGraph"
+import { Concept } from "../../main/concepts/Concept"
 import { Attributes, NodePredicate } from "graphology-types"
-import { RelationType } from "../main/concepts/RelationType"
+import { RelationType } from "../../main/concepts/RelationType"
 
 global.console = require('console')
 
@@ -24,19 +24,19 @@ describe('Question Answering', () => {
         }
 
         // The sky is blue
-        kb.conceptGraph.addNode('kb_1', { label: 'sky' })
-        kb.conceptGraph.addNode('kb_2', { label: 'blue' })
+        kb.conceptGraph.addNode('kb_1', { description: 'sky' })
+        kb.conceptGraph.addNode('kb_2', { description: 'blue' })
         kb.conceptGraph.addEdge('kb_1', 'kb_2', { type: RelationType.ATTR })
 
-        kb.conceptGraph.addNode('kb_3', { label: 'sky-is-blue' })
+        kb.conceptGraph.addNode('kb_3', { description: 'sky-is-blue' })
         kb.conceptGraph.addEdge('kb_3', 'kb_1', { type: RelationType.DEFINED_BY })
         kb.conceptGraph.addEdge('kb_3', 'kb_2', { type: RelationType.DEFINED_BY })
 
         // Blue is a colour
-        kb.conceptGraph.addNode('kb_4', { label: 'colour' })
+        kb.conceptGraph.addNode('kb_4', { description: 'colour' })
         kb.conceptGraph.addEdge('kb_2', 'kb_4', { type: RelationType.IS_A })
 
-        kb.conceptGraph.addNode('kb_5', { label: 'blue-is-a-colour' })
+        kb.conceptGraph.addNode('kb_5', { description: 'blue-is-a-colour' })
         kb.conceptGraph.addEdge('kb_5', 'kb_2', { type: RelationType.DEFINED_BY })
         kb.conceptGraph.addEdge('kb_5', 'kb_4', { type: RelationType.DEFINED_BY })
 
@@ -50,12 +50,12 @@ describe('Question Answering', () => {
         const questionConcept: ConceptGraph = new ConceptGraph()
 
         // What coulour is the sky?
-        questionConcept.addNode(1, { label: 'specific-unkown' })
-        questionConcept.addNode(2, { label: 'colour', refId: 'kb_4' })
-        questionConcept.addNode(3, { label: 'sky', refId: 'kb_1'  })
+        questionConcept.addNode(1, { description: 'specific-unkown' })
+        questionConcept.addNode(2, { description: 'colour', refId: 'kb_4' })
+        questionConcept.addNode(3, { description: 'sky', refId: 'kb_1'  })
         questionConcept.addEdge(1, 2, { type: RelationType.IS_A })
         questionConcept.addEdge(3, 1, { type: RelationType.ATTR })
-        questionConcept.addNode(4, { label: 'what-color-is-the-sky' })
+        questionConcept.addNode(4, { description: 'what-color-is-the-sky' })
         questionConcept.addEdge(4, 1, { type: RelationType.DEFINED_BY })
         questionConcept.addEdge(4, 2, { type: RelationType.DEFINED_BY })
         questionConcept.addEdge(4, 3, { type: RelationType.DEFINED_BY })
@@ -67,7 +67,7 @@ describe('Question Answering', () => {
         console.log(answerConceptGraph)
         // console.log('finding node')
         // const predicate: NodePredicate<Concept> = (node: string, attributes: Concept) => {
-        //     return attributes.label === 'colour'
+        //     return attributes.description === 'colour'
         // }
 
         // const id: string | undefined = answerConceptGraph.findNode(predicate)
