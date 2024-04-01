@@ -1,0 +1,33 @@
+{
+    "word_sky": {
+        "-instance_of->": "word",
+        "-is_spelled->": {
+            "word_sky_ordered_group_of_letters": {
+                "-instance_of->": "ordered group",
+                "-contains->": {
+                    "s": {
+                        "-next->": "k"
+                    },
+                    "k": {
+                        "-next->": "y"
+                    },
+                    "y": {}
+                }
+            }
+        },
+        "-has_possible_definition_group->": {
+            "word_sky_definition_group": {
+                "-instance_of->": "unordered group",
+                "-contains->": {
+                    "sky_noun": {
+                        "-has_attribute->": {
+                            "blue": {
+                                "-intance_of->": "colour"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

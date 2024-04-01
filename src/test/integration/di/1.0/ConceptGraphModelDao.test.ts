@@ -46,10 +46,16 @@ describe(ConceptGraphModelDao, () => {
             await conceptGraphModelDao.deleteAllData()
             const cgModels: ConceptGraphModel[] = [
                 // require('../../../../../concept-graphs/di/1.0/sky_is_blue_car_is_yellow.json'),
-                require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/basics.json'),
-                require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/page1.json'),
-                require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/page2.json'),
-                require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/page3.json'),
+
+                // Can Butterflies taste with their feet
+                // require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/basics.json'),
+                // require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/page1.json'),
+                // require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/page2.json'),
+                // require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/page3.json'),
+
+                // Words
+                require('../../../../../concept-graphs/di/1.0/words/1_letters.json'),
+                require('../../../../../concept-graphs/di/1.0/words/2_basic_nouns.json'),
             ]
             for (const cgModel of cgModels) {
                 await conceptGraphModelDao.createConceptGraphModel(cgModel)

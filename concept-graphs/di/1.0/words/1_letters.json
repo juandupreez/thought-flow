@@ -1,0 +1,119 @@
+{
+    "alphabet": {
+        "-is->": {
+            "alphabet ordered group": {
+                "-instance_of->": "ordered group",
+                "-of->": {
+                    "letter": {
+                        "<-is-": "alphabet"
+                    }
+                },
+                "-contains->": {
+                    "a": {
+                        "-instance_of->": "letter",
+                        "-next->": "b"
+                    },
+                    "b": {
+                        "-instance_of->": "letter",
+                        "-next->": "c"
+                    },
+                    "c": {
+                        "-instance_of->": "letter",
+                        "-next->": "d"
+                    },
+                    "d": {
+                        "-instance_of->": "letter",
+                        "-next->": "e"
+                    },
+                    "e": {
+                        "-instance_of->": "letter",
+                        "-next->": "f"
+                    },
+                    "f": {
+                        "-instance_of->": "letter",
+                        "-next->": "g"
+                    },
+                    "g": {
+                        "-instance_of->": "letter",
+                        "-next->": "h"
+                    },
+                    "h": {
+                        "-instance_of->": "letter",
+                        "-next->": "i"
+                    },
+                    "i": {
+                        "-instance_of->": "letter",
+                        "-next->": "j"
+                    },
+                    "j": {
+                        "-instance_of->": "letter",
+                        "-next->": "k"
+                    },
+                    "k": {
+                        "-instance_of->": "letter",
+                        "-next->": "l"
+                    },
+                    "l": {
+                        "-instance_of->": "letter",
+                        "-next->": "m"
+                    },
+                    "m": {
+                        "-instance_of->": "letter",
+                        "-next->": "n"
+                    },
+                    "n": {
+                        "-instance_of->": "letter",
+                        "-next->": "o"
+                    },
+                    "o": {
+                        "-instance_of->": "letter",
+                        "-next->": "p"
+                    },
+                    "p": {
+                        "-instance_of->": "letter",
+                        "-next->": "q"
+                    },
+                    "q": {
+                        "-instance_of->": "letter",
+                        "-next->": "r"
+                    },
+                    "r": {
+                        "-instance_of->": "letter",
+                        "-next->": "s"
+                    },
+                    "s": {
+                        "-instance_of->": "letter",
+                        "-next->": "t"
+                    },
+                    "t": {
+                        "-instance_of->": "letter",
+                        "-next->": "u"
+                    },
+                    "u": {
+                        "-instance_of->": "letter",
+                        "-next->": "v"
+                    },
+                    "v": {
+                        "-instance_of->": "letter",
+                        "-next->": "w"
+                    },
+                    "w": {
+                        "-instance_of->": "letter",
+                        "-next->": "x"
+                    },
+                    "x": {
+                        "-instance_of->": "letter",
+                        "-next->": "y"
+                    },
+                    "y": {
+                        "-instance_of->": "letter",
+                        "-next->": "z"
+                    },
+                    "z": {
+                        "-instance_of->": "letter"
+                    }
+                }
+            }
+        }
+    }
+}
