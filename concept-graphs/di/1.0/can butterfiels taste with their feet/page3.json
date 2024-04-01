@@ -1,0 +1,86 @@
+{
+    "event_005": {
+        "-happened_after->": "event_004",
+        "-is->": {
+            "the tiny detective family": {
+                "-performing_action->": {
+                    "climb": {
+                        "<-is-": "event_005",
+                        "-obj->": {
+                            "bookcase": {
+                                "<-is-": "event_005"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "event_006": {
+        "-happened_after->": "event_005",
+        "-is->": {
+            "mom": {
+                "-performing_action->": {
+                    "picked out": {
+                        "<-is-": "event_006",
+                        "-obj->": {
+                            "book_001": {
+                                "<-is-": "event_006",
+                                "-has_attribute->": {
+                                    "title_001": {
+                                        "-is->": {
+                                            "butterflies in general": {
+                                                "-of->": {
+                                                    "the pacific": {
+                                                        "<-is-": "title_001"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "event_007": {
+        "-happened_after->": "event_008",
+        "-is->": {
+            "dad": {
+                "-performing_action->": {
+                    "wind": {
+                        "<-is-": "event_007",
+                        "-obj->": {
+                            "story-thread": {
+                                "<-is-": "event_007",
+                                "-has_attribute->": {
+                                    "red_001": {
+                                        "-instance_of->": {
+                                            "red": {
+                                                "-subtype_of->": "colour"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "-has_attribute->": {
+                            "around": {
+                                "<-is-": "event_007",
+                                "-obj->": {
+                                    "waist": {
+                                        "<-is-": "event_007",
+                                        "belongs_to": "dad"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

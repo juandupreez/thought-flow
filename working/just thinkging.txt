@@ -1,0 +1,48 @@
+Types of questions:
+    what happened at this time?
+    Can x do y?
+    What is the name of
+    Simultaneous events
+
+Different concept quantaties:
+    butterflies in general
+    a specific question
+    every butterfly 
+    any butterfly
+
+Butterfly questions:
+    When did the Tiny Family make supper?
+    What big question did the middle child in the Tiny Family ask?
+    What was the name of the middle child in the Tiny Family
+    Who said don't be silly?
+    What is the order in which the children were born?
+    What did Mom want to find out by jumping in a book?
+    Why did Olly think he knew best?
+    Why did Olly always think he knew best?
+
+Scope
+    global
+    per definition
+    per event
+
+Using the definition to enrich original concept:
+for example defining a family as group of people. Then giving partial information to instance of family and finding unknowns based on the definition.
+
+comparisons. Relative relations. Bigger than, Eldest etc
+
+Possible Modules
+    learning
+    words
+    grammar
+    math
+    boolean-logic
+    group-mechanics
+    creativity
+    cause-and-effect
+    rules
+    defining
+    subtypes-and-supertypes
+    equality
+    timing
+    reading
+    speaking

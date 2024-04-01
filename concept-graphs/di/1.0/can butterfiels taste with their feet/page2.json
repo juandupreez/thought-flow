@@ -1,0 +1,99 @@
+{
+    "event_003": {
+        "-happened_after->": "event_002",
+        "-is->": {
+            "olly": {
+                "-performing_action->": {
+                    "say": {
+                        "<-is.": "event_003",
+                        "-obj->": {
+                            "statement_001": {
+                                "<-is.": "event_003",
+                                "-is->": {
+                                    "butterflies in general": {
+                                        "-performing_action->": {
+                                            "can": {
+                                                "<-is-": "statement_001",
+                                                "-has_attribute->": "not",
+                                                "-obj->": {
+                                                    "action_001": {
+                                                        "<-is-": "statement_001",
+                                                        "-is->": {
+                                                            "taste": {
+                                                                "<-is-": "action_001",
+                                                                "-with->": {
+                                                                    "feet": {
+                                                                        "<-is-": "action_001",
+                                                                        "-belongs_to->": "butterflies in general"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "-has_attribute->": "obviously"
+                            }
+                        }
+                    }
+                },
+                "-is->": {
+                    "eldest": {
+                        "-of->": {
+                            "group_003": {
+                                "-subgroup_of->": "the tiny detective family",
+                                "-of->": {
+                                    "group_person_003": {
+                                        "-has_attribute->": "child"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "event_004": {
+        "-happened_after->": "event_003",
+        "-is->": {
+            "mom": {
+                "<-is-": "event_004",
+                "-performing_action->": {
+                    "say": {
+                        "<-is-": "event_004",
+                        "-obj->": {
+                            "statement_002": {
+                                "<-is-": "event_004",
+                                "-is->": {
+                                    "let us": {
+                                        "<-is-": "statement_002",
+                                        "-performing_action->": {
+                                            "jump and find": {
+                                                "<-is-": "statement_002",
+                                                "-is->": {
+                                                    "jump": {
+                                                        "-into->": "book",
+                                                        "-and->": {
+                                                            "find": {
+                                                                "<-is-": "jump and find",
+                                                                "-obj->": "out"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

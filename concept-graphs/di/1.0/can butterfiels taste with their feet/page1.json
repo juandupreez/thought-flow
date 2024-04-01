@@ -1,0 +1,90 @@
+{
+    "event_001": {
+        "-happened_at_time->": "one evening",
+        "-happened_during->": "event_002",
+        "-is->": {
+            "the tiny detective family": {
+                "<-is-": "event_001",
+                "-performing_action->": {
+                    "make": {
+                        "<-is-": "event_001",
+                        "-obj->": {
+                            "supper": {
+                                "<-is-": "event_001"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "event_002": {
+        "-happened_during->": "event_001",
+        "-is->": {
+            "tyga": {
+                "-is->": {
+                    "the middle one": {
+                        "-in->": "the tiny detective family"
+                    }
+                },
+                "-performing_action->": {
+                    "ask": {
+                        "<-is-": "event_002",
+                        "-obj->": {
+                            "question_001": {
+                                "<-is-": "event_002",
+                                "-has_attribute->": "big",
+                                "-instance_of->": "question",
+                                "-is->": {
+                                    "butterflies in general": {
+                                        "<-is-": "question_001",
+                                        "-performing_action->": {
+                                            "can": {
+                                                "<-is-": "question_001",
+                                                "-obj->": {
+                                                    "action_001": {
+                                                        "<-is-": "question_001",
+                                                        "-is->": {
+                                                            "taste": {
+                                                                "<-is-": "action_001",
+                                                                "-with->": {
+                                                                    "feet": {
+                                                                        "<-is-": "action_001",
+                                                                        "-belongs_to->": "butterflies in general"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "-has_attribute->": {
+                                                    "unkown_001": {
+                                                        "<-is-": "question_001",
+                                                        "-instance_of->": {
+                                                            "true or false": {
+                                                                "-is->": {
+                                                                    "true": {
+                                                                        "-or->": {
+                                                                            "false": {
+                                                                                "<-is-": "true or false",
+                                                                                "-or->": "true"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

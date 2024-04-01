@@ -177,4 +177,13 @@ export class ConceptGraphModelDao {
             toConceptId: simpleRelation.toConceptId
         })
     }
+
+    async deleteAllData () {
+        const result1: EagerResult = await this.neo4JAdapter.execute(`
+            MATCH (n)-[r]->(m) DELETE r, n, m
+        `)
+        const result2: EagerResult = await this.neo4JAdapter.execute(`
+            MATCH (n) DELETE n
+        `)
+    }
 }

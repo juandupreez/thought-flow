@@ -1,0 +1,45 @@
+{
+    "the tiny detective family": {
+        "-instance_of->": {
+            "family": {
+                "-is->": {
+                    "group_001": {
+                        "-of->": {
+                            "group_person_001": {
+                                "<-is-": "family",
+                                "-instance_of->": "person",
+                                "-related_to->": {
+                                    "group_002": {
+                                        "<-is-": "family",
+                                        "-is_subgroup_of->": "group_001",
+                                        "-of->": {
+                                            "group_person_002": {
+                                                "<-is-": "family",
+                                                "-is_not->": {
+                                                    "group_person_001": {
+                                                        "<-is-": "family"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "-is->": {
+            "finite_group": {
+                "-is->": {
+                    "mom": {},
+                    "dad": {},
+                    "bo": {},
+                    "tyga": {},
+                    "olly": {}
+                }
+            }
+        }
+    }
+}

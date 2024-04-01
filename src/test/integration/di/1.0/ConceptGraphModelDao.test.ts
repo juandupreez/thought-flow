@@ -5,7 +5,7 @@ import { LogLevel, glog } from "../../../../main/util/Logger"
 import { connections } from "../../../_testconf/connections"
 
 global.console = require('console')
-glog().setLogLevel(LogLevel.TRACE)
+glog().setLogLevel(LogLevel.DEBUG)
 
 describe(ConceptGraphModelDao, () => {
     const dbConnectKey: string = 'di-1.0'
@@ -35,21 +35,29 @@ describe(ConceptGraphModelDao, () => {
                         }
                     }
                 }
-            }   
+            }
             await conceptGraphModelDao.createConceptGraphModel(cgModel)
-            
 
-            
+
+
         })
-        
-        fit('should create a concept graph in DB from a file', async () => {
 
-            const cgModel: ConceptGraphModel = require('../../../../../concept-graphs/di/1.0/sky_is_blue_car_is_yellow.json')
-            await conceptGraphModelDao.createConceptGraphModel(cgModel)
-            
+        fit('should create a concept graph in DB from files', async () => {
+            await conceptGraphModelDao.deleteAllData()
+            const cgModels: ConceptGraphModel[] = [
+                // require('../../../../../concept-graphs/di/1.0/sky_is_blue_car_is_yellow.json'),
+                require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/basics.json'),
+                require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/page1.json'),
+                require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/page2.json'),
+                require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/page3.json'),
+            ]
+            for (const cgModel of cgModels) {
+                await conceptGraphModelDao.createConceptGraphModel(cgModel)
+            }
 
-            
-        })
+
+
+        }, 5 * 60 * 1000)
     })
 
 })
