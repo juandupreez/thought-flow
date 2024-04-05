@@ -1,8 +1,17 @@
 import Graph from "graphology"
-import { Concept } from "./Concept"
-import { Relation } from "./Relation"
+import { Concept } from "../model/Concept"
+import { Relation } from "../model/Relation"
+import { IdGenerator } from "../util/IdGenerator"
+import { ConceptGraphModel } from "../model/ConceptGraphModel"
 
 export class ConceptGraph extends Graph<Concept, Relation> {
+
+    private readonly idGen: IdGenerator = new IdGenerator()
+
+    addConcept (concept: Concept) {
+        const key: string = this.idGen.getNextUniqueId()
+        this.addNode(key, concept)
+    }
 
     static copyFrom (graphToCopy: ConceptGraph): ConceptGraph {
         const copiedGraph: ConceptGraph = new ConceptGraph()
@@ -28,4 +37,8 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         })
         return this
     }
+
+    // toString (): string {
+    //     const conceptGraphModel: ConceptGraphModel = this._
+    // }
 }

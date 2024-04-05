@@ -1,11 +1,11 @@
-import { Concept } from "../../main/concepts/Concept"
+import { Concept } from "../../main/model/Concept"
 import { ConceptGraph } from "../../main/concepts/ConceptGraph"
 import { KnowledgeBase } from "../../main/kb/KnowledgeBase"
 import { Op } from "../../main/ops/Op"
 import Graph from "graphology"
 import { OpGraph } from "../../main/ops/OpGraph"
 import { genId } from "../../main/util/IdGenerator"
-import { Relation } from "../../main/concepts/Relation"
+import { Relation } from "../../main/model/Relation"
 
 export interface DummyKbDb {
     opGraph: OpGraph,

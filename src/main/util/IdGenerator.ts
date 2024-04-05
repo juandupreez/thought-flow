@@ -1,14 +1,6 @@
 export class IdGenerator {
 
-    static instance: IdGenerator
-    id: number = 1;
-
-    static getInstance (): IdGenerator {
-        if (!this.instance) {
-            this.instance = new IdGenerator()
-        }
-        return this.instance
-    }
+    protected id: number = 1;
 
     getNextUniqueId (): string {
         const curConceptTypeId: number = this.id++
@@ -17,6 +9,19 @@ export class IdGenerator {
 
 }
 
+export class IdGeneratorSingleton extends IdGenerator {
+
+    static instance: IdGenerator
+
+    static getInstance (): IdGenerator {
+        if (!this.instance) {
+            this.instance = new IdGenerator()
+        }
+        return this.instance
+    }
+
+}
+
 export function genId (): string {
-    return IdGenerator.getInstance().getNextUniqueId()
+    return IdGeneratorSingleton.getInstance().getNextUniqueId()
 }

@@ -6,10 +6,10 @@ module.exports = {
     // '**/src/test/unit/util/ConceptMatcher.test.ts',
 
 
-    // Integration Tests
+    // Integration Tests: DI 1.0
     // '**/src/test/integration/di/1.0/quickrun.test.ts',
-    '**/src/test/integration/di/1.0/ConceptGraphModelDao.test.ts',
-    // '**/src/test/integration/di/1.0/Neo4jConceptMatcher.test.ts',
+    // '**/src/test/integration/di/1.0/ConceptGraphModelDao.test.ts',
+    '**/src/test/integration/di/1.0/Reader.test.ts',
 
 
   ],

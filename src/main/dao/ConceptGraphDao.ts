@@ -1,7 +1,8 @@
 import { EagerResult } from "neo4j-driver-core"
 import { Neo4JAdapter } from "../neo4j/Neo4JAdapter"
 import { glog } from "../util/Logger"
-import { ConceptGraphModel } from "./ConceptGraphModel"
+import { ConceptGraphModel } from "../model/ConceptGraphModel"
+import { ConceptGraph } from "../concepts/ConceptGraph"
 
 interface SimpleRelation {
     fromConceptId: string
@@ -9,7 +10,7 @@ interface SimpleRelation {
     relationType: string
 }
 
-export class ConceptGraphModelDao {
+export class ConceptGraphDao {
     private readonly neo4JAdapter: Neo4JAdapter
 
     constructor (neo4JAdapter: Neo4JAdapter) {
@@ -176,6 +177,24 @@ export class ConceptGraphModelDao {
             fromConceptId: simpleRelation.fromConceptId,
             toConceptId: simpleRelation.toConceptId
         })
+    }
+
+    async getConceptByKey (key: string): Promise<ConceptGraph> {
+        const foundConcept: ConceptGraph = new ConceptGraph()
+        const result: EagerResult = await this.neo4JAdapter.execute(`
+            MATCH (n: Concept) WHERE n.key = $key RETURN n
+        `, {
+            key: key
+        })
+        result.records.forEach((record) => {
+            record.forEach((value: any, key: PropertyKey, record) => {
+                foundConcept.addConcept({
+                    description: value.properties.description,
+                    refId: value.properties.key
+                })
+            })
+        })
+        return foundConcept
     }
 
     async deleteAllData () {

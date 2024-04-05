@@ -3,7 +3,7 @@ import { ConceptGraph } from "./concepts/ConceptGraph"
 import { KnowledgeBase } from "./kb/KnowledgeBase"
 import { Op } from "./ops/Op"
 import { OpType } from "./ops/OpType"
-import { Concept } from "./concepts/Concept"
+import { Concept } from "./model/Concept"
 
 export class ThinkR {
     private readonly kb: KnowledgeBase

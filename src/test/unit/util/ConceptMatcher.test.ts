@@ -1,5 +1,5 @@
 import { ConceptGraph } from "../../../main/concepts/ConceptGraph"
-import { RelationType } from "../../../main/concepts/RelationType"
+import { RelationType } from "../../../main/model/RelationType"
 import { ConceptMatcher } from "../../../main/util/ConceptMatcher"
 import { GlobalLogger, LogLevel } from "../../../main/util/Logger"
 

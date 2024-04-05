@@ -1,4 +1,4 @@
-import { Concept } from "../concepts/Concept"
+import { Concept } from "../model/Concept"
 import { ConceptGraph } from "../concepts/ConceptGraph"
 import { glog } from "./Logger"
 

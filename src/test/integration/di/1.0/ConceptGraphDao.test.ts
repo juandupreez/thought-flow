@@ -1,5 +1,5 @@
-import { ConceptGraphModel } from "../../../../main/concepts/ConceptGraphModel"
-import { ConceptGraphModelDao } from "../../../../main/concepts/ConceptGraphModelDao"
+import { ConceptGraphModel } from "../../../../main/model/ConceptGraphModel"
+import { ConceptGraphDao } from "../../../../main/dao/ConceptGraphDao"
 import { Neo4JAdapter } from "../../../../main/neo4j/Neo4JAdapter"
 import { LogLevel, glog } from "../../../../main/util/Logger"
 import { connections } from "../../../_testconf/connections"
@@ -7,14 +7,14 @@ import { connections } from "../../../_testconf/connections"
 global.console = require('console')
 glog().setLogLevel(LogLevel.DEBUG)
 
-describe(ConceptGraphModelDao, () => {
+describe(ConceptGraphDao, () => {
     const dbConnectKey: string = 'di-1.0'
     const neo4JAdapter: Neo4JAdapter = new Neo4JAdapter(connections[dbConnectKey])
-    let conceptGraphModelDao: ConceptGraphModelDao
+    let conceptGraphModelDao: ConceptGraphDao
 
     beforeAll(async () => {
         await neo4JAdapter.connect()
-        conceptGraphModelDao = new ConceptGraphModelDao(neo4JAdapter)
+        conceptGraphModelDao = new ConceptGraphDao(neo4JAdapter)
     })
 
     afterAll(async () => {
@@ -46,6 +46,9 @@ describe(ConceptGraphModelDao, () => {
             await conceptGraphModelDao.deleteAllData()
             const cgModels: ConceptGraphModel[] = [
                 // require('../../../../../concept-graphs/di/1.0/sky_is_blue_car_is_yellow.json'),
+
+                // Fundamentals
+                require('../../../../../concept-graphs/di/1.0/_fundamentals/1_fundamental_concepts.json'),
 
                 // Can Butterflies taste with their feet
                 // require('../../../../../concept-graphs/di/1.0/can butterfiels taste with their feet/basics.json'),
