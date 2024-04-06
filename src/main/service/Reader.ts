@@ -9,8 +9,8 @@ export class Reader {
     }
 
     async readSingleWord (wordText: string): Promise<ConceptGraph> {
-        const wordConceptKey: string = 'word_' + wordText
-        const wordConcept: ConceptGraph = await this.conceptGraphDao.getConceptByKey(wordConceptKey)
+        const wordConceptId: string = 'word_' + wordText
+        const wordConcept: ConceptGraph = await this.conceptGraphDao.getConceptByKey(wordConceptId)
         // if !unkown
         const bestConceptDefinition: ConceptGraph = await this._getBestWordDefinition(wordConcept)
         return bestConceptDefinition

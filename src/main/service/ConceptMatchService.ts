@@ -45,14 +45,14 @@ export class ConceptMatchService {
         let isLeaf: boolean = true
         glog().trace(debugContextLine + '\tprocessing all related edges')
         query.forEachEdge(queryConceptId, (
-            queryEdgeId: string, queryEdgeAttributes,
+            queryRelationId: string, queryEdgeAttributes,
             querySourceId: string, queryTargetId: string,
             querySourceAttributes: Concept, queryTragetAttributes: Concept
         ) => {
-            if (!ctx.alreadyProcessedQueryRelationIds.includes(queryEdgeId)) {
+            if (!ctx.alreadyProcessedQueryRelationIds.includes(queryRelationId)) {
                 glog().trace(debugContextLine + `\t\tprocessing edge: [${querySourceAttributes.description}] - ${queryEdgeAttributes.type} -> [${queryTragetAttributes.description}]`)
                 isLeaf = false
-                // ctx.alreadyProcessedQueryRelationIds.push(queryEdgeId)
+                // ctx.alreadyProcessedQueryRelationIds.push(queryRelationId)
 
                 const queryNeighbourId: string = querySourceId === queryConceptId ? queryTargetId : querySourceId
                 const queryNeighbourAttributes: Concept = querySourceId === queryConceptId ? queryTragetAttributes : querySourceAttributes
@@ -62,7 +62,7 @@ export class ConceptMatchService {
 
                 glog().trace(debugContextLine + '\t\tquerying all db edges')
                 dataToQuery.forEachEdge((
-                    dataEdgeId: string, dataEdgeAttributes,
+                    dataRelationId: string, dataEdgeAttributes,
                     dataSourceId: string, dataTargetId: string,
                     dataSourceAttributes: Concept, dataTragetAttributes: Concept
                 ) => {
@@ -81,12 +81,12 @@ export class ConceptMatchService {
                         const possibleMatch: ConceptGraph = new ConceptGraph()
                         possibleMatch.addNode(dataSourceId, { ...dataSourceAttributes })
                         possibleMatch.addNode(dataTargetId, { ...dataTragetAttributes })
-                        possibleMatch.addEdgeWithKey(dataEdgeId, dataSourceId, dataTargetId, { type: dataEdgeAttributes.type })
+                        possibleMatch.addEdgeWithKey(dataRelationId, dataSourceId, dataTargetId, { type: dataEdgeAttributes.type })
 
                         if (opts.shouldIncludeQueryInResult) {
                             const queryConcept: Concept = querySourceAttributes
-                            possibleMatch.addConceptByKeyIfNotExists(queryConceptId, queryConcept)
-                            possibleMatch.addConceptByKeyIfNotExists(queryNeighbourId, queryNeighbourAttributes)
+                            possibleMatch.addConceptByIdIfNotExists(queryConceptId, queryConcept)
+                            possibleMatch.addConceptByIdIfNotExists(queryNeighbourId, queryNeighbourAttributes)
                             if (queryNeighbourSourceOrTarget === 'target') {
                                 possibleMatch.addRelationByTypeIfNotExists(queryEdgeAttributes.type, queryConceptId, queryNeighbourId)
                                 possibleMatch.addRelationByTypeIfNotExists('matches', queryConceptId, dataSourceId)
@@ -102,7 +102,7 @@ export class ConceptMatchService {
                         glog().trace(debugContextLine + '\t\t\tgetting downtream possible matches')
                         const downstreamPossibleMatches: ConceptGraph[] = this._recursivelyGetPossibleMatches(query, dataToQuery, queryNeighbourId, opts, {
                             alreadyProcessedQueryConceptIds: [...ctx.alreadyProcessedQueryConceptIds, queryConceptId],
-                            alreadyProcessedQueryRelationIds: [...ctx.alreadyProcessedQueryRelationIds, queryEdgeId]
+                            alreadyProcessedQueryRelationIds: [...ctx.alreadyProcessedQueryRelationIds, queryRelationId]
                         })
                         glog().trace(debugContextLine + '\t\t\tafter recursion: found downstream matches: ' + downstreamPossibleMatches.length)
 

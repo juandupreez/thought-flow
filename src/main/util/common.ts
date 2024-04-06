@@ -1,16 +1,16 @@
 import { Concept } from "../model/Concept"
 
-export function parseConceptKeyAndIsUnknown (conceptKeyAndRefIdStr: string): { conceptKey: string, refId: string | undefined } {
-    const str1: string = conceptKeyAndRefIdStr
-    const refIdMatches: RegExpMatchArray | null = conceptKeyAndRefIdStr.match(/\(.*\)/g)
+export function parseConceptIdAndIsUnknown (conceptIdAndRefIdStr: string): { conceptId: string, refId: string | undefined } {
+    const str1: string = conceptIdAndRefIdStr
+    const refIdMatches: RegExpMatchArray | null = conceptIdAndRefIdStr.match(/\(.*\)/g)
     if (refIdMatches === null) {
         return {
-            conceptKey: str1.replaceAll(/\(.*\)/g, '').trim(),
+            conceptId: str1.replaceAll(/\(.*\)/g, '').trim(),
             refId: undefined
         }
     } else {
         return {
-            conceptKey: str1.replaceAll(/\(.*\)/g, '').trim(),
+            conceptId: str1.replaceAll(/\(.*\)/g, '').trim(),
             refId: refIdMatches[0].replaceAll('(', '').replaceAll(')', '').trim()
         }
     }

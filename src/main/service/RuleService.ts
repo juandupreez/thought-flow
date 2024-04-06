@@ -31,69 +31,69 @@ export class RuleService {
 
     const result: ConceptGraph = new ConceptGraph()
 
-    conclusion.forEachEdge((conclusionEdgeId: string, conclusionRelation,
-      conclusionSourceConceptKey, conclusionTargetConceptKey,
+    conclusion.forEachEdge((conclusionRelationId: string, conclusionRelation,
+      conclusionSourceConceptId, conclusionTargetConceptId,
       conclusionSourceConcept, conclusionTargetConcept
     ) => {
 
       if (isConceptUnknown(conclusionSourceConcept) && !isConceptUnknown(conclusionTargetConcept)) {
-        result.addConceptByKeyIfNotExists(conclusionTargetConceptKey, conclusionTargetConcept)
+        result.addConceptByIdIfNotExists(conclusionTargetConceptId, conclusionTargetConcept)
 
-        const hypothesisConceptId: string | undefined = firstMatchWithHypothesis.findNode((nodeId: string) => {
-          return nodeId === conclusionSourceConceptKey
+        const hypothesisConceptId: string | undefined = firstMatchWithHypothesis.findNode((ConceptId: string) => {
+          return ConceptId === conclusionSourceConceptId
         })
 
         if (hypothesisConceptId === undefined) {
-          result.addConceptByKeyIfNotExists(conclusionSourceConceptKey, conclusionSourceConcept)
-          result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptKey, conclusionTargetConceptKey)
+          result.addConceptByIdIfNotExists(conclusionSourceConceptId, conclusionSourceConcept)
+          result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptId, conclusionTargetConceptId)
         } else {
           let matchedConceptId: string | undefined
           firstMatchWithHypothesis.forEachEdge(hypothesisConceptId, (
-            matchedEdgeId: string, matchedRelation,
-            matchedSourceConceptKey, matchedTargetConceptKey,
+            matchedRelationId: string, matchedRelation,
+            matchedSourceConceptId, matchedTargetConceptId,
             matchedSourceConcept, matchedTargetConcept) => {
               if (matchedRelation.type === 'matches') {
-                matchedConceptId = matchedTargetConceptKey
+                matchedConceptId = matchedTargetConceptId
               }
           })
           if (matchedConceptId === undefined ) {
-            result.addConceptByKeyIfNotExists(conclusionSourceConceptKey, conclusionSourceConcept)
-            result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptKey, conclusionTargetConceptKey)
+            result.addConceptByIdIfNotExists(conclusionSourceConceptId, conclusionSourceConcept)
+            result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptId, conclusionTargetConceptId)
           } else {
             const matchedConcept: Concept = firstMatchWithHypothesis.getNodeAttributes(matchedConceptId)
-            result.addConceptByKeyIfNotExists(matchedConceptId, matchedConcept)
-            result.addRelationByTypeIfNotExists(conclusionRelation.type, matchedConceptId, conclusionTargetConceptKey)
+            result.addConceptByIdIfNotExists(matchedConceptId, matchedConcept)
+            result.addRelationByTypeIfNotExists(conclusionRelation.type, matchedConceptId, conclusionTargetConceptId)
           
           }
         }
 
       } else if (!isConceptUnknown(conclusionSourceConcept) && isConceptUnknown(conclusionTargetConcept)) {
-        result.addConceptByKeyIfNotExists(conclusionSourceConceptKey, conclusionSourceConcept)
+        result.addConceptByIdIfNotExists(conclusionSourceConceptId, conclusionSourceConcept)
 
-        const hypothesisConceptId: string | undefined = firstMatchWithHypothesis.findNode((nodeId: string) => {
-          return nodeId === conclusionTargetConceptKey
+        const hypothesisConceptId: string | undefined = firstMatchWithHypothesis.findNode((ConceptId: string) => {
+          return ConceptId === conclusionTargetConceptId
         })
 
         if (hypothesisConceptId === undefined) {
-          result.addConceptByKeyIfNotExists(conclusionTargetConceptKey, conclusionTargetConcept)
-          result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptKey, conclusionTargetConceptKey)
+          result.addConceptByIdIfNotExists(conclusionTargetConceptId, conclusionTargetConcept)
+          result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptId, conclusionTargetConceptId)
         } else {
           let matchedConceptId: string | undefined
           firstMatchWithHypothesis.forEachEdge(hypothesisConceptId, (
-            matchedEdgeId: string, matchedRelation,
-            matchedSourceConceptKey, matchedTargetConceptKey,
+            matchedRelationId: string, matchedRelation,
+            matchedSourceConceptId, matchedTargetConceptId,
             matchedSourceConcept, matchedTargetConcept) => {
               if (matchedRelation.type === 'matches') {
-                matchedConceptId = matchedTargetConceptKey
+                matchedConceptId = matchedTargetConceptId
               }
           })
           if (matchedConceptId === undefined ) {
-            result.addConceptByKeyIfNotExists(conclusionTargetConceptKey, conclusionTargetConcept)
-            result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptKey, conclusionTargetConceptKey)
+            result.addConceptByIdIfNotExists(conclusionTargetConceptId, conclusionTargetConcept)
+            result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptId, conclusionTargetConceptId)
           } else {
             const matchedConcept: Concept = firstMatchWithHypothesis.getNodeAttributes(matchedConceptId)
-            result.addConceptByKeyIfNotExists(matchedConceptId, matchedConcept)
-            result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptKey, matchedConceptId)
+            result.addConceptByIdIfNotExists(matchedConceptId, matchedConcept)
+            result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptId, matchedConceptId)
           
           }
         }
@@ -102,15 +102,15 @@ export class RuleService {
 
         firstMatchWithHypothesis.forEachEdge((edgeId, relation, sourceId, targetId, sourceConcept, targetConcept) => {
           if (conclusionRelation.type === relation.type) {
-            result.addConceptByKeyIfNotExists(sourceId, sourceConcept)
-            result.addConceptByKeyIfNotExists(targetId, targetConcept)
+            result.addConceptByIdIfNotExists(sourceId, sourceConcept)
+            result.addConceptByIdIfNotExists(targetId, targetConcept)
             result.addRelationByTypeIfNotExists(relation.type, sourceId, targetId)
           }
         })
       } else {
-        result.addConceptByKeyIfNotExists(conclusionSourceConceptKey, conclusionSourceConcept)
-        result.addConceptByKeyIfNotExists(conclusionTargetConceptKey, conclusionTargetConcept)
-        result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptKey, conclusionTargetConceptKey)
+        result.addConceptByIdIfNotExists(conclusionSourceConceptId, conclusionSourceConcept)
+        result.addConceptByIdIfNotExists(conclusionTargetConceptId, conclusionTargetConcept)
+        result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptId, conclusionTargetConceptId)
       }
     })
 

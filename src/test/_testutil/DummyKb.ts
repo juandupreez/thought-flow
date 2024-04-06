@@ -59,7 +59,7 @@ export class DummyKb implements KnowledgeBase {
             let neighbourAttributes: Concept = sourceId === unkownConceptId ? targetAttributes : sourceAttributes
 
             this.db.conceptGraph.forEachEdge((
-                kbEdgeId: string, kbEdgeAttributes: Relation, kbSourceId: string, kbTargetId: string,
+                kbRelationId: string, kbEdgeAttributes: Relation, kbSourceId: string, kbTargetId: string,
                 kbSourceAttributes: Concept, kbTargetAttributes: Concept
             ) => {
                 const doesEdgeMatch: boolean = [attributes.type].includes(kbEdgeAttributes.type)

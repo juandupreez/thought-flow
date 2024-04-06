@@ -1,5 +1,5 @@
 export interface ConceptGraphModel {
-    [conceptKey: string]: {
+    [conceptId: string]: {
         [relationKey: `-${string}->` | `<-${string}-`]: string | ConceptGraphModel
     }
 }

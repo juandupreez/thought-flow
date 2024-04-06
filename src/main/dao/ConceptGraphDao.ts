@@ -125,23 +125,23 @@ export class ConceptGraphDao {
         return relations
     }
 
-    async createConceptIfNotExists (conceptKey: string) {
+    async createConceptIfNotExists (conceptId: string) {
         const result: EagerResult = await this.neo4JAdapter.execute(`
             MATCH (n: Concept) 
             WHERE n.key = $key 
             RETURN n
-        `, { key: conceptKey })
+        `, { key: conceptId })
         const doesConceptExist: boolean = result.records.length !== 0
 
         if (!doesConceptExist) {
-            await this.createConcept(conceptKey)
+            await this.createConcept(conceptId)
         }
     }
 
-    async createConcept (conceptKey: string) {
+    async createConcept (conceptId: string) {
         const result: EagerResult = await this.neo4JAdapter.execute(`
             CREATE (n: Concept {key: $key, description: $key})
-        `, { key: conceptKey })
+        `, { key: conceptId })
 
     }
 

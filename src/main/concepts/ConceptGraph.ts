@@ -3,7 +3,7 @@ import { Concept } from "../model/Concept"
 import { Relation } from "../model/Relation"
 import { IdGenerator } from "../util/IdGenerator"
 import { ConceptGraphModel } from "../model/ConceptGraphModel"
-import { parseConceptKeyAndIsUnknown } from "../util/common"
+import { parseConceptIdAndIsUnknown } from "../util/common"
 
 export class ConceptGraph extends Graph<Concept, Relation> {
 
@@ -16,26 +16,26 @@ export class ConceptGraph extends Graph<Concept, Relation> {
     }
 
     addConcept (concept: Concept) {
-        const key: string = this.idGen.getNextUniqueId()
-        this.addNode(key, concept)
+        const conceptId: string = this.idGen.getNextUniqueId()
+        this.addNode(conceptId, concept)
     }
 
-    addConceptByKey (key: string, concept: Concept) {
-        this.addNode(key, concept)
+    addConceptById (conceptId: string, concept: Concept) {
+        this.addNode(conceptId, concept)
     }
 
-    addConceptByKeyIfNotExists (key: string, concept: Concept) {
-        const existingNodeId: string | undefined = this.findNode(((possibleExistingNodeId) => { return possibleExistingNodeId === key }))
-        if (existingNodeId === undefined) {
-            this.addConceptByKey(key, concept)
+    addConceptByIdIfNotExists (conceptId: string, concept: Concept) {
+        const existingConceptId: string | undefined = this.findNode(((possibleExistingConceptId) => { return possibleExistingConceptId === conceptId }))
+        if (existingConceptId === undefined) {
+            this.addConceptById(conceptId, concept)
         }
     }
 
-    addRelationByTypeIfNotExists (relationType: string, sourceConceptKey: string, targetConceptKey: string) {
-        const relationKey: string = `${sourceConceptKey}-${relationType}->${targetConceptKey}`
-        const existingEdgeId: string | undefined = this.findEdge(((possibleExistingEdgeId) => { return possibleExistingEdgeId === relationKey }))
-        if (existingEdgeId === undefined) {
-            this.addEdgeWithKey(relationKey, sourceConceptKey, targetConceptKey, {
+    addRelationByTypeIfNotExists (relationType: string, sourceConceptId: string, targetConceptId: string) {
+        const relationKey: string = `${sourceConceptId}-${relationType}->${targetConceptId}`
+        const existingRelationId: string | undefined = this.findEdge(((possibleExistingRelationId) => { return possibleExistingRelationId === relationKey }))
+        if (existingRelationId === undefined) {
+            this.addEdgeWithKey(relationKey, sourceConceptId, targetConceptId, {
                 type: relationType
             })
         }
@@ -47,17 +47,17 @@ export class ConceptGraph extends Graph<Concept, Relation> {
     }
 
     mergeFrom (graphToMerge: ConceptGraph): ConceptGraph {
-        graphToMerge.forEachNode((nodeId: string, nodeAttributes: Concept) => {
-            const existingNodeId: string | undefined = this.findNode(((possibleExistingNodeId) => { return possibleExistingNodeId === nodeId }))
-            if (existingNodeId === undefined) {
-                this.addNode(nodeId, nodeAttributes)
+        graphToMerge.forEachNode((ConceptId: string, nodeAttributes: Concept) => {
+            const existingConceptId: string | undefined = this.findNode(((possibleExistingConceptId) => { return possibleExistingConceptId === ConceptId }))
+            if (existingConceptId === undefined) {
+                this.addNode(ConceptId, nodeAttributes)
             } else {
-                this.mergeNodeAttributes(nodeId, nodeAttributes)
+                this.mergeNodeAttributes(ConceptId, nodeAttributes)
             }
         })
         graphToMerge.forEachEdge((edgeId: string, edgeAttributes: Relation, sourceId: string, targetId: string) => {
-            const existingEdgeId: string | undefined = this.findEdge(((possibleExistingEdgeId) => { return possibleExistingEdgeId === edgeId }))
-            if (existingEdgeId === undefined) {
+            const existingRelationId: string | undefined = this.findEdge(((possibleExistingRelationId) => { return possibleExistingRelationId === edgeId }))
+            if (existingRelationId === undefined) {
                 this.addEdgeWithKey(edgeId, sourceId, targetId, edgeAttributes)
             } else {
                 this.mergeEdgeAttributes(edgeId, edgeAttributes)
@@ -77,23 +77,23 @@ export class ConceptGraph extends Graph<Concept, Relation> {
     }
 
     private static _fillNodesRecursively (conceptModel: ConceptGraphModel, conceptGraph: ConceptGraph) {
-        for (const conceptKeyAndRefIdStr in conceptModel) {
-            const { conceptKey, refId } = parseConceptKeyAndIsUnknown(conceptKeyAndRefIdStr)
-            if (Object.prototype.hasOwnProperty.call(conceptModel, conceptKeyAndRefIdStr)) {
-                conceptGraph.addConceptByKeyIfNotExists(conceptKey, {
-                    description: conceptKey,
+        for (const conceptIdAndRefIdStr in conceptModel) {
+            const { conceptId, refId } = parseConceptIdAndIsUnknown(conceptIdAndRefIdStr)
+            if (Object.prototype.hasOwnProperty.call(conceptModel, conceptIdAndRefIdStr)) {
+                conceptGraph.addConceptByIdIfNotExists(conceptId, {
+                    description: conceptId,
                     isUnknown: false
                 })
                 const conceptRelations: { [relationKey: `-${string}->` | `<-${string}-`]: string | ConceptGraphModel }
-                    = conceptModel[conceptKeyAndRefIdStr]
+                    = conceptModel[conceptIdAndRefIdStr]
 
                 for (const relationKey in conceptRelations) {
                     if (Object.prototype.hasOwnProperty.call(conceptRelations, relationKey)) {
                         const relatedConcept: string | ConceptGraphModel = conceptRelations[relationKey as `-${string}->` | `<-${string}-`]
                         if (typeof relatedConcept === 'string') {
-                            const { conceptKey, refId } = parseConceptKeyAndIsUnknown(relatedConcept)
-                            conceptGraph.addConceptByKeyIfNotExists(conceptKey, {
-                                description: conceptKey,
+                            const { conceptId, refId } = parseConceptIdAndIsUnknown(relatedConcept)
+                            conceptGraph.addConceptByIdIfNotExists(conceptId, {
+                                description: conceptId,
                                 isUnknown: false
                             })
                         } else {
@@ -107,11 +107,11 @@ export class ConceptGraph extends Graph<Concept, Relation> {
     }
 
     private static _fillEdgesRecursively (conceptModel: ConceptGraphModel, conceptGraph: ConceptGraph) {
-        for (const conceptKeyAndRefIdStr in conceptModel) {
-            const { conceptKey, refId } = parseConceptKeyAndIsUnknown(conceptKeyAndRefIdStr)
-            if (Object.prototype.hasOwnProperty.call(conceptModel, conceptKeyAndRefIdStr)) {
+        for (const conceptIdAndRefIdStr in conceptModel) {
+            const { conceptId, refId } = parseConceptIdAndIsUnknown(conceptIdAndRefIdStr)
+            if (Object.prototype.hasOwnProperty.call(conceptModel, conceptIdAndRefIdStr)) {
                 const conceptRelations: { [relationKey: `-${string}->` | `<-${string}-`]: string | ConceptGraphModel }
-                    = conceptModel[conceptKeyAndRefIdStr]
+                    = conceptModel[conceptIdAndRefIdStr]
 
                 for (const relationKey in conceptRelations) {
                     const relationKeyWithoutArrows: string = relationKey
@@ -122,21 +122,21 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                     if (Object.prototype.hasOwnProperty.call(conceptRelations, relationKey)) {
                         const relatedConcept: string | ConceptGraphModel = conceptRelations[relationKey as `-${string}->` | `<-${string}-`]
                         if (typeof relatedConcept === 'string') {
-                            const relatedConceptParsed: { conceptKey: string, refId: string | undefined } = parseConceptKeyAndIsUnknown(relatedConcept)
+                            const relatedConceptParsed: { conceptId: string, refId: string | undefined } = parseConceptIdAndIsUnknown(relatedConcept)
                             if (direction === 'sourceToTarget') {
-                                conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, conceptKey, relatedConceptParsed.conceptKey)
+                                conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, conceptId, relatedConceptParsed.conceptId)
                             } else {
-                                conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, relatedConceptParsed.conceptKey, conceptKey)
+                                conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, relatedConceptParsed.conceptId, conceptId)
                             }
                         } else {
-                            for (const relatedConceptKey in relatedConcept) {
-                                if (Object.prototype.hasOwnProperty.call(relatedConcept, relatedConceptKey)) {
-                                    const relatedConceptParsed: { conceptKey: string, refId: string | undefined } = parseConceptKeyAndIsUnknown(relatedConceptKey)
+                            for (const relatedConceptId in relatedConcept) {
+                                if (Object.prototype.hasOwnProperty.call(relatedConcept, relatedConceptId)) {
+                                    const relatedConceptParsed: { conceptId: string, refId: string | undefined } = parseConceptIdAndIsUnknown(relatedConceptId)
 
                                     if (direction === 'sourceToTarget') {
-                                        conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, conceptKey, relatedConceptParsed.conceptKey)
+                                        conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, conceptId, relatedConceptParsed.conceptId)
                                     } else {
-                                        conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, relatedConceptParsed.conceptKey, conceptKey)
+                                        conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, relatedConceptParsed.conceptId, conceptId)
                                     }
                                 }
                             }
@@ -181,17 +181,17 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         const matchedConceptGraph: ConceptGraph = new ConceptGraph()
         const conceptIds: string[] = []
         // add all concepts which are targets of relation type: x-relationType->targetConcept
-        this.forEachEdge((edgeId: string, relation: Relation, sourceConceptKey, targetConceptKey, sourceConcept, targetConcept) => {
+        this.forEachEdge((edgeId: string, relation: Relation, sourceConceptId, targetConceptId, sourceConcept, targetConcept) => {
             if (relation.type === relationType) {
-                matchedConceptGraph.addConceptByKeyIfNotExists(targetConceptKey, targetConcept)
-                conceptIds.push(targetConceptKey)
+                matchedConceptGraph.addConceptByIdIfNotExists(targetConceptId, targetConcept)
+                conceptIds.push(targetConceptId)
             }
         })
-        this.forEachEdge((edgeId: string, relation: Relation, sourceConceptKey, targetConceptKey, sourceConcept, targetConcept) => {
-            if (conceptIds.includes(sourceConceptKey) && conceptIds.includes(targetConceptKey)) {
-                matchedConceptGraph.addConceptByKeyIfNotExists(sourceConceptKey, sourceConcept)
-                matchedConceptGraph.addConceptByKeyIfNotExists(targetConceptKey, targetConcept)
-                matchedConceptGraph.addEdgeWithKey(edgeId, sourceConceptKey, targetConceptKey, relation)
+        this.forEachEdge((edgeId: string, relation: Relation, sourceConceptId, targetConceptId, sourceConcept, targetConcept) => {
+            if (conceptIds.includes(sourceConceptId) && conceptIds.includes(targetConceptId)) {
+                matchedConceptGraph.addConceptByIdIfNotExists(sourceConceptId, sourceConcept)
+                matchedConceptGraph.addConceptByIdIfNotExists(targetConceptId, targetConcept)
+                matchedConceptGraph.addEdgeWithKey(edgeId, sourceConceptId, targetConceptId, relation)
             }
         })
 

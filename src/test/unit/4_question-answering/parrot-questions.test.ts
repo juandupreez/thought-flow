@@ -1,8 +1,5 @@
 import { ThinkR } from "../../../main/ThinkR"
 import { instance, mock } from 'ts-mockito'
-import { KnowledgeBase } from "../../main/kb/KnowledgeBase"
-import { Op } from "../../main/ops/Op"
-import { HaltOp } from "../../main/ops/HaltOp"
 import { DummyKb, DummyKbDb } from "../../_testutil/DummyKb"
 import Graph from 'graphology'
 import { ConceptGraph } from "../../../main/concepts/ConceptGraph"
