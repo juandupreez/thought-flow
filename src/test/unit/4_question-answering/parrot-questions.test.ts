@@ -1,13 +1,13 @@
-import { ThinkR } from "../../main/ThinkR"
+import { ThinkR } from "../../../main/ThinkR"
 import { instance, mock } from 'ts-mockito'
 import { KnowledgeBase } from "../../main/kb/KnowledgeBase"
 import { Op } from "../../main/ops/Op"
 import { HaltOp } from "../../main/ops/HaltOp"
-import { DummyKb, DummyKbDb } from "../_testutil/DummyKb"
+import { DummyKb, DummyKbDb } from "../../_testutil/DummyKb"
 import Graph from 'graphology'
-import { ConceptGraph } from "../../main/concepts/ConceptGraph"
+import { ConceptGraph } from "../../../main/concepts/ConceptGraph"
 import { OpGraph } from "../../main/ops/OpGraph"
-import { Concept } from "../../main/model/Concept"
+import { Concept } from "../../../main/model/Concept"
 import { Attributes, NodePredicate } from "graphology-types"
 import { RelationType } from "../../main/model/RelationType"
 

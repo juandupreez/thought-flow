@@ -13,31 +13,22 @@ interface MatchingOptions {
 }
 
 export class ConceptMatchService {
-    private readonly data: ConceptGraph
 
-    constructor (data: ConceptGraph) {
-        this.data = data
-    }
-
-    static getMatches (query: ConceptGraph, data: ConceptGraph, opts: MatchingOptions = { shouldIncludeQueryInResult: false }): ConceptGraph[] {
-        return new ConceptMatchService(data).getMatches(query, opts)
-    }
-
-    getMatches (query: ConceptGraph, opts: MatchingOptions = { shouldIncludeQueryInResult: false }): ConceptGraph[] {
+    getMatches (query: ConceptGraph, dataToQuery: ConceptGraph, opts: MatchingOptions = { shouldIncludeQueryInResult: false }): ConceptGraph[] {
         const matches: ConceptGraph[] = []
         const randomlyChosenConceptId: string | undefined = query.nodes()[0]
         if (randomlyChosenConceptId === undefined) {
             return []
         } else if (query.nodes().length === 1 && query.edges().length === 0) {
-            const wholeDataGraph: ConceptGraph = ConceptGraph.copyFrom(this.data)
+            const wholeDataGraph: ConceptGraph = ConceptGraph.copyFrom(dataToQuery)
             return [wholeDataGraph]
         } else {
-            matches.push(...this._recursivelyGetPossibleMatches(query, randomlyChosenConceptId, opts))
+            matches.push(...this._recursivelyGetPossibleMatches(query, dataToQuery, randomlyChosenConceptId, opts))
         }
         return matches
     }
 
-    private _recursivelyGetPossibleMatches (query: ConceptGraph, queryConceptId: string, opts: MatchingOptions = { shouldIncludeQueryInResult: false }, ctx: RecursiveContext = {
+    private _recursivelyGetPossibleMatches (query: ConceptGraph, dataToQuery: ConceptGraph, queryConceptId: string, opts: MatchingOptions = { shouldIncludeQueryInResult: false }, ctx: RecursiveContext = {
         alreadyProcessedQueryConceptIds: [],
         alreadyProcessedQueryRelationIds: []
     }): ConceptGraph[] {
@@ -70,7 +61,7 @@ export class ConceptMatchService {
                 glog().trace(debugContextLine + '\t\tneighbour identified as: ' + queryNeighbourAttributes.description)
 
                 glog().trace(debugContextLine + '\t\tquerying all db edges')
-                this.data.forEachEdge((
+                dataToQuery.forEachEdge((
                     dataEdgeId: string, dataEdgeAttributes,
                     dataSourceId: string, dataTargetId: string,
                     dataSourceAttributes: Concept, dataTragetAttributes: Concept
@@ -109,7 +100,7 @@ export class ConceptMatchService {
 
 
                         glog().trace(debugContextLine + '\t\t\tgetting downtream possible matches')
-                        const downstreamPossibleMatches: ConceptGraph[] = this._recursivelyGetPossibleMatches(query, queryNeighbourId, opts, {
+                        const downstreamPossibleMatches: ConceptGraph[] = this._recursivelyGetPossibleMatches(query, dataToQuery, queryNeighbourId, opts, {
                             alreadyProcessedQueryConceptIds: [...ctx.alreadyProcessedQueryConceptIds, queryConceptId],
                             alreadyProcessedQueryRelationIds: [...ctx.alreadyProcessedQueryRelationIds, queryEdgeId]
                         })

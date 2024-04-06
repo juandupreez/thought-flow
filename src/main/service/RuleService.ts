@@ -7,6 +7,8 @@ import { isConceptUnknown } from "../util/common"
 
 export class RuleService {
 
+  private readonly conceptMatchService: ConceptMatchService = new ConceptMatchService()
+
   async appyRule (rule: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph> {
     const hypothesis: ConceptGraph = rule.getConceptDefinitionByRelationType('has_hypothesis')
     glog().debug('Hypothesis')
@@ -16,7 +18,7 @@ export class RuleService {
     glog().debug('Conclusion')
     glog().debug('\t', conclusion.nodes())
     glog().debug('\t', conclusion.edges())
-    const possibleMatchesWithHypothesis: ConceptGraph[] = ConceptMatchService.getMatches(hypothesis, args, { shouldIncludeQueryInResult: true })
+    const possibleMatchesWithHypothesis: ConceptGraph[] = this.conceptMatchService.getMatches(hypothesis, args, { shouldIncludeQueryInResult: true })
     if (possibleMatchesWithHypothesis.length === 0) {
       return new ConceptGraph()
     }
