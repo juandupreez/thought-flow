@@ -1,4 +1,4 @@
-import { ConceptGraph } from "../../../main/concepts/ConceptGraph"
+import { ConceptGraph } from "../../../main/core/ConceptGraph"
 import { RuleService } from "../../../main/service/RuleService"
 import { LogLevel, glog } from "../../../main/util/Logger"
 

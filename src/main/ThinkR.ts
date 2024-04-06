@@ -1,5 +1,5 @@
 import { NodePredicate } from "graphology-types"
-import { ConceptGraph } from "./concepts/ConceptGraph"
+import { ConceptGraph } from "./core/ConceptGraph"
 import { KnowledgeBase } from "./kb/KnowledgeBase"
 import { Op } from "./ops/Op"
 import { OpType } from "./ops/OpType"

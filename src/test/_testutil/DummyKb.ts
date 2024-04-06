@@ -1,5 +1,5 @@
 import { Concept } from "../../main/model/Concept"
-import { ConceptGraph } from "../../main/concepts/ConceptGraph"
+import { ConceptGraph } from "../../main/core/ConceptGraph"
 import { KnowledgeBase } from "../../main/kb/KnowledgeBase"
 import { Op } from "../../main/ops/Op"
 import Graph from "graphology"

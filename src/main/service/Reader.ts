@@ -1,4 +1,4 @@
-import { ConceptGraph } from "../concepts/ConceptGraph"
+import { ConceptGraph } from "../core/ConceptGraph"
 import { ConceptGraphDao } from "../dao/ConceptGraphDao"
 
 export class Reader {

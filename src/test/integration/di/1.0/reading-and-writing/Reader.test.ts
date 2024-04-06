@@ -1,8 +1,8 @@
-import { ConceptGraph } from "../../../../main/concepts/ConceptGraph"
-import { ConceptGraphDao } from "../../../../main/dao/ConceptGraphDao"
-import { Neo4JAdapter } from "../../../../main/dao/neo4j/Neo4JAdapter"
-import { Reader } from "../../../../main/service/Reader"
-import { connections } from "../../../_testconf/connections"
+import { ConceptGraph } from "../../../../../main/core/ConceptGraph"
+import { ConceptGraphDao } from "../../../../../main/dao/ConceptGraphDao"
+import { Neo4JAdapter } from "../../../../../main/dao/neo4j/Neo4JAdapter"
+import { Reader } from "../../../../../main/service/Reader"
+import { connections } from "../../../../_testconf/connections"
 
 global.console = require('console')
 

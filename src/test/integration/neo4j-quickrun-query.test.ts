@@ -1,6 +1,6 @@
-import { Neo4JAdapter } from "../../../../main/dao/neo4j/Neo4JAdapter"
-import { glog } from "../../../../main/util/Logger"
-import { connections } from "../../../_testconf/connections"
+import { Neo4JAdapter } from "../../main/dao/neo4j/Neo4JAdapter"
+import { glog } from "../../main/util/Logger"
+import { connections } from "../_testconf/connections"
 
 global.console = require('console')
 

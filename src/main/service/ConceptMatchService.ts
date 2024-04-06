@@ -1,5 +1,5 @@
 import { Concept } from "../model/Concept"
-import { ConceptGraph } from "../concepts/ConceptGraph"
+import { ConceptGraph } from "../core/ConceptGraph"
 import { glog } from "../util/Logger"
 import { isConceptUnknown } from "../util/common"
 

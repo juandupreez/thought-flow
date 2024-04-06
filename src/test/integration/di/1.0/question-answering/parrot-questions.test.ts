@@ -2,7 +2,7 @@ import { ThinkR } from "../../../main/ThinkR"
 import { instance, mock } from 'ts-mockito'
 import { DummyKb, DummyKbDb } from "../../_testutil/DummyKb"
 import Graph from 'graphology'
-import { ConceptGraph } from "../../../main/concepts/ConceptGraph"
+import { ConceptGraph } from "../../../main/core/ConceptGraph"
 import { OpGraph } from "../../main/ops/OpGraph"
 import { Concept } from "../../../main/model/Concept"
 import { Attributes, NodePredicate } from "graphology-types"

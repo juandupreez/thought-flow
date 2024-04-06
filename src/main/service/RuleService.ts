@@ -1,4 +1,4 @@
-import { ConceptGraph } from "../concepts/ConceptGraph"
+import { ConceptGraph } from "../core/ConceptGraph"
 import { Concept } from "../model/Concept"
 import { Relation } from "../model/Relation"
 import { ConceptMatchService } from "./ConceptMatchService"
