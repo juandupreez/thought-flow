@@ -1,4 +1,4 @@
-import { Neo4JAdapter } from "../../../../main/neo4j/Neo4JAdapter"
+import { Neo4JAdapter } from "../../../../main/dao/neo4j/Neo4JAdapter"
 import { glog } from "../../../../main/util/Logger"
 import { connections } from "../../../_testconf/connections"
 

@@ -1,5 +1,5 @@
 import { Query } from "neo4j-driver-core/types/types"
-import { glog } from "../util/Logger"
+import { glog } from "../../util/Logger"
 import { Neo4JConnectionConfig } from "./Neo4JConnectionConfig"
 import neo4j, { Driver, EagerResult } from 'neo4j-driver'
 

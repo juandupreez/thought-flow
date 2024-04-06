@@ -1,10 +1,10 @@
 import { ConceptGraph } from "../../../main/concepts/ConceptGraph"
-import { ConceptMatcher } from "../../../main/util/ConceptMatcher"
+import { ConceptMatchService } from "../../../main/service/ConceptMatchService"
 import { GlobalLogger, LogLevel } from "../../../main/util/Logger"
 
 global.console = require('console')
 
-describe(ConceptMatcher, () => {
+describe(ConceptMatchService, () => {
 
     beforeAll(() => {
         GlobalLogger.getInstance().setLogLevel(LogLevel.DEBUG)
@@ -13,7 +13,7 @@ describe(ConceptMatcher, () => {
     describe('simple matches', () => {
         it('should not match anything is query is empty', () => {
             const data: ConceptGraph = new ConceptGraph()
-            const matcher: ConceptMatcher = new ConceptMatcher(data)
+            const matcher: ConceptMatchService = new ConceptMatchService(data)
 
             const query: ConceptGraph = new ConceptGraph()
             const matches: ConceptGraph[] = matcher.getMatches(query)
@@ -26,7 +26,7 @@ describe(ConceptMatcher, () => {
             data.addNode(1, { description: 'sky' })
             data.addNode(2, { description: 'blue' })
             data.addEdgeWithKey(1, 1, 2, { type: 'some_relation' })
-            const matcher: ConceptMatcher = new ConceptMatcher(data)
+            const matcher: ConceptMatchService = new ConceptMatchService(data)
 
             const query: ConceptGraph = new ConceptGraph()
             query.addNode(1, { description: 'unknown', isUnknown: true })
@@ -47,7 +47,7 @@ describe(ConceptMatcher, () => {
             data.addNode(3, { description: 'yellow' })
             data.addEdgeWithKey(1, 1, 2, { type: 'some_relation' })
             data.addEdgeWithKey(2, 1, 3, { type: 'some_relation' })
-            const matcher: ConceptMatcher = new ConceptMatcher(data)
+            const matcher: ConceptMatchService = new ConceptMatchService(data)
 
             const query: ConceptGraph = new ConceptGraph()
             query.addNode(1, { description: 'unknown', isUnknown: true })
@@ -70,7 +70,7 @@ describe(ConceptMatcher, () => {
             data.addEdgeWithKey(1, 1, 2, { type: 'some_relation' })
             data.addEdgeWithKey(2, 2, 1, { type: 'some_relation' })
             data.addEdgeWithKey(3, 1, 3, { type: 'some_relation' })
-            const matcher: ConceptMatcher = new ConceptMatcher(data)
+            const matcher: ConceptMatchService = new ConceptMatchService(data)
 
             const query: ConceptGraph = new ConceptGraph()
             query.addNode(1, { description: 'unknown', isUnknown: true })
@@ -93,7 +93,7 @@ describe(ConceptMatcher, () => {
             data.addEdgeWithKey(1, 1, 2, { type: 'some_relation' })
             data.addEdgeWithKey(2, 2, 1, { type: 'some_relation' })
             data.addEdgeWithKey(3, 1, 3, { type: 'some_relation' })
-            const matcher: ConceptMatcher = new ConceptMatcher(data)
+            const matcher: ConceptMatchService = new ConceptMatchService(data)
 
             const query: ConceptGraph = new ConceptGraph()
             query.addNode(1, { description: 'unknown', isUnknown: true })
@@ -119,7 +119,7 @@ describe(ConceptMatcher, () => {
             data.addEdgeWithKey(2, 1, 3, { type: 'some_relation' }) // sky is yellow
             data.addEdgeWithKey(3, 4, 3, { type: 'some_relation' }) // car is yellow
             data.addEdgeWithKey(4, 5, 2, { type: 'some_relation' }) // sea is blue
-            const matcher: ConceptMatcher = new ConceptMatcher(data)
+            const matcher: ConceptMatchService = new ConceptMatchService(data)
 
             const query: ConceptGraph = new ConceptGraph()
             query.addNode(1, { description: 'unknown', isUnknown: true })
@@ -153,7 +153,7 @@ describe(ConceptMatcher, () => {
             data.addNode('colour', { description: 'colour' })
             data.addEdgeWithKey(1, 'sky', 'blue', { type: 'some_relation' })
             data.addEdgeWithKey(2, 'blue', 'colour', { type: 'some_relation' })
-            const matcher: ConceptMatcher = new ConceptMatcher(data)
+            const matcher: ConceptMatchService = new ConceptMatchService(data)
 
             const query: ConceptGraph = new ConceptGraph()
             query.addNode('unknown_001', { description: 'unknown', isUnknown: true })

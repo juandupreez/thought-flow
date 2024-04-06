@@ -3,7 +3,7 @@ import { Concept } from "../model/Concept"
 import { Relation } from "../model/Relation"
 import { IdGenerator } from "../util/IdGenerator"
 import { ConceptGraphModel } from "../model/ConceptGraphModel"
-import { parseConceptKeyAndRefId } from "../util/common"
+import { parseConceptKeyAndIsUnknown } from "../util/common"
 
 export class ConceptGraph extends Graph<Concept, Relation> {
 
@@ -78,7 +78,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
 
     private static _fillNodesRecursively (conceptModel: ConceptGraphModel, conceptGraph: ConceptGraph) {
         for (const conceptKeyAndRefIdStr in conceptModel) {
-            const { conceptKey, refId } = parseConceptKeyAndRefId(conceptKeyAndRefIdStr)
+            const { conceptKey, refId } = parseConceptKeyAndIsUnknown(conceptKeyAndRefIdStr)
             if (Object.prototype.hasOwnProperty.call(conceptModel, conceptKeyAndRefIdStr)) {
                 conceptGraph.addConceptByKeyIfNotExists(conceptKey, {
                     description: conceptKey,
@@ -91,7 +91,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                     if (Object.prototype.hasOwnProperty.call(conceptRelations, relationKey)) {
                         const relatedConcept: string | ConceptGraphModel = conceptRelations[relationKey as `-${string}->` | `<-${string}-`]
                         if (typeof relatedConcept === 'string') {
-                            const { conceptKey, refId } = parseConceptKeyAndRefId(relatedConcept)
+                            const { conceptKey, refId } = parseConceptKeyAndIsUnknown(relatedConcept)
                             conceptGraph.addConceptByKeyIfNotExists(conceptKey, {
                                 description: conceptKey,
                                 isUnknown: false
@@ -108,7 +108,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
 
     private static _fillEdgesRecursively (conceptModel: ConceptGraphModel, conceptGraph: ConceptGraph) {
         for (const conceptKeyAndRefIdStr in conceptModel) {
-            const { conceptKey, refId } = parseConceptKeyAndRefId(conceptKeyAndRefIdStr)
+            const { conceptKey, refId } = parseConceptKeyAndIsUnknown(conceptKeyAndRefIdStr)
             if (Object.prototype.hasOwnProperty.call(conceptModel, conceptKeyAndRefIdStr)) {
                 const conceptRelations: { [relationKey: `-${string}->` | `<-${string}-`]: string | ConceptGraphModel }
                     = conceptModel[conceptKeyAndRefIdStr]
@@ -122,7 +122,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                     if (Object.prototype.hasOwnProperty.call(conceptRelations, relationKey)) {
                         const relatedConcept: string | ConceptGraphModel = conceptRelations[relationKey as `-${string}->` | `<-${string}-`]
                         if (typeof relatedConcept === 'string') {
-                            const relatedConceptParsed: { conceptKey: string, refId: string | undefined } = parseConceptKeyAndRefId(relatedConcept)
+                            const relatedConceptParsed: { conceptKey: string, refId: string | undefined } = parseConceptKeyAndIsUnknown(relatedConcept)
                             if (direction === 'sourceToTarget') {
                                 conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, conceptKey, relatedConceptParsed.conceptKey)
                             } else {
@@ -131,7 +131,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                         } else {
                             for (const relatedConceptKey in relatedConcept) {
                                 if (Object.prototype.hasOwnProperty.call(relatedConcept, relatedConceptKey)) {
-                                    const relatedConceptParsed: { conceptKey: string, refId: string | undefined } = parseConceptKeyAndRefId(relatedConceptKey)
+                                    const relatedConceptParsed: { conceptKey: string, refId: string | undefined } = parseConceptKeyAndIsUnknown(relatedConceptKey)
 
                                     if (direction === 'sourceToTarget') {
                                         conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, conceptKey, relatedConceptParsed.conceptKey)

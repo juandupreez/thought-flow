@@ -1,5 +1,5 @@
 import { EagerResult } from "neo4j-driver-core"
-import { Neo4JAdapter } from "../neo4j/Neo4JAdapter"
+import { Neo4JAdapter } from "./neo4j/Neo4JAdapter"
 import { glog } from "../util/Logger"
 import { ConceptGraphModel } from "../model/ConceptGraphModel"
 import { ConceptGraph } from "../concepts/ConceptGraph"

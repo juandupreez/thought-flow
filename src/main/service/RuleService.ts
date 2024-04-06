@@ -1,7 +1,7 @@
 import { ConceptGraph } from "../concepts/ConceptGraph"
 import { Concept } from "../model/Concept"
 import { Relation } from "../model/Relation"
-import { ConceptMatcher } from "../util/ConceptMatcher"
+import { ConceptMatchService } from "./ConceptMatchService"
 import { glog } from "../util/Logger"
 import { isConceptUnknown } from "../util/common"
 
@@ -16,7 +16,7 @@ export class RuleService {
     glog().debug('Conclusion')
     glog().debug('\t', conclusion.nodes())
     glog().debug('\t', conclusion.edges())
-    const possibleMatchesWithHypothesis: ConceptGraph[] = ConceptMatcher.getMatches(hypothesis, args, { shouldIncludeQueryInResult: true })
+    const possibleMatchesWithHypothesis: ConceptGraph[] = ConceptMatchService.getMatches(hypothesis, args, { shouldIncludeQueryInResult: true })
     if (possibleMatchesWithHypothesis.length === 0) {
       return new ConceptGraph()
     }

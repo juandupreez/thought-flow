@@ -1,7 +1,7 @@
 import { Concept } from "../model/Concept"
 import { ConceptGraph } from "../concepts/ConceptGraph"
-import { glog } from "./Logger"
-import { isConceptUnknown } from "./common"
+import { glog } from "../util/Logger"
+import { isConceptUnknown } from "../util/common"
 
 interface RecursiveContext {
     alreadyProcessedQueryConceptIds: string[],
@@ -12,7 +12,7 @@ interface MatchingOptions {
     shouldIncludeQueryInResult: boolean
 }
 
-export class ConceptMatcher {
+export class ConceptMatchService {
     private readonly data: ConceptGraph
 
     constructor (data: ConceptGraph) {
@@ -20,7 +20,7 @@ export class ConceptMatcher {
     }
 
     static getMatches (query: ConceptGraph, data: ConceptGraph, opts: MatchingOptions = { shouldIncludeQueryInResult: false }): ConceptGraph[] {
-        return new ConceptMatcher(data).getMatches(query, opts)
+        return new ConceptMatchService(data).getMatches(query, opts)
     }
 
     getMatches (query: ConceptGraph, opts: MatchingOptions = { shouldIncludeQueryInResult: false }): ConceptGraph[] {

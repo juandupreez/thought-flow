@@ -1,6 +1,6 @@
 import { ConceptGraphModel } from "../../../../main/model/ConceptGraphModel"
 import { ConceptGraphDao } from "../../../../main/dao/ConceptGraphDao"
-import { Neo4JAdapter } from "../../../../main/neo4j/Neo4JAdapter"
+import { Neo4JAdapter } from "../../../../main/dao/neo4j/Neo4JAdapter"
 import { LogLevel, glog } from "../../../../main/util/Logger"
 import { connections } from "../../../_testconf/connections"
 
