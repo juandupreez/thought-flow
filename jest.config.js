@@ -2,7 +2,7 @@ module.exports = {
   testMatch: [
     // Unit Tests
     // '**/src/test/unit/question-answering.test.ts',
-    // '**/src/test/unit/util/ConceptMatcher.test.ts',
+    '**/src/test/unit/util/ConceptMatcher.test.ts',
     '**/src/test/unit/rules/BasicRule.test.ts',
 
 
