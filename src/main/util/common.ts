@@ -17,5 +17,5 @@ export function parseConceptKeyAndRefId (conceptKeyAndRefIdStr: string): { conce
 }
 
 export function isConceptUnknown(concept: Concept): boolean {
-    return concept.refId === undefined
+    return concept.isUnknown ?? false
 }

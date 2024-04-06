@@ -29,10 +29,7 @@ export class ConceptMatcher {
         if (randomlyChosenConceptId === undefined) {
             return []
         } else if (query.nodes().length === 1 && query.edges().length === 0) {
-            const wholeDataGraph: ConceptGraph = this.data.copy() as ConceptGraph
-            wholeDataGraph.forEachNode((nodeId: string, attributes: Concept) => {
-                attributes.refId = nodeId
-            })
+            const wholeDataGraph: ConceptGraph = ConceptGraph.copyFrom(this.data)
             return [wholeDataGraph]
         } else {
             matches.push(...this._recursivelyGetPossibleMatches(query, randomlyChosenConceptId, opts))
@@ -82,17 +79,17 @@ export class ConceptMatcher {
 
                     let doesNeighbourIdMatch: boolean = false
                     if (queryNeighbourSourceOrTarget === 'target') {
-                        doesNeighbourIdMatch = queryNeighbourAttributes.refId === dataTargetId || isConceptUnknown(queryNeighbourAttributes)
+                        doesNeighbourIdMatch = queryNeighbourId === dataTargetId || isConceptUnknown(queryNeighbourAttributes)
                     } else {
-                        doesNeighbourIdMatch = queryNeighbourAttributes.refId === dataSourceId || isConceptUnknown(queryNeighbourAttributes)
+                        doesNeighbourIdMatch = queryNeighbourId === dataSourceId || isConceptUnknown(queryNeighbourAttributes)
                     }
                     if (doesEdgeMatch && doesNeighbourIdMatch) {
                         glog().trace(debugContextLine + '\t\t\tfound matching DB edge: ')
                         glog().trace(debugContextLine + `\t\t\t[${dataSourceAttributes.description}] - ${dataEdgeAttributes.type} -> [${dataTragetAttributes.description}]`)
 
                         const possibleMatch: ConceptGraph = new ConceptGraph()
-                        possibleMatch.addNode(dataSourceId, { ...dataSourceAttributes, refId: dataSourceId })
-                        possibleMatch.addNode(dataTargetId, { ...dataTragetAttributes, refId: dataTargetId })
+                        possibleMatch.addNode(dataSourceId, { ...dataSourceAttributes })
+                        possibleMatch.addNode(dataTargetId, { ...dataTragetAttributes })
                         possibleMatch.addEdgeWithKey(dataEdgeId, dataSourceId, dataTargetId, { type: dataEdgeAttributes.type })
 
                         if (opts.shouldIncludeQueryInResult) {

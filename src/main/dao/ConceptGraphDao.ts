@@ -190,7 +190,7 @@ export class ConceptGraphDao {
             record.forEach((value: any, key: PropertyKey, record) => {
                 foundConcept.addConcept({
                     description: value.properties.description,
-                    refId: value.properties.key
+                    isUnknown: value.properties.isUnknown
                 })
             })
         })

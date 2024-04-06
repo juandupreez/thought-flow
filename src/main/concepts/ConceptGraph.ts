@@ -82,7 +82,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
             if (Object.prototype.hasOwnProperty.call(conceptModel, conceptKeyAndRefIdStr)) {
                 conceptGraph.addConceptByKeyIfNotExists(conceptKey, {
                     description: conceptKey,
-                    refId: refId
+                    isUnknown: false
                 })
                 const conceptRelations: { [relationKey: `-${string}->` | `<-${string}-`]: string | ConceptGraphModel }
                     = conceptModel[conceptKeyAndRefIdStr]
@@ -94,7 +94,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                             const { conceptKey, refId } = parseConceptKeyAndRefId(relatedConcept)
                             conceptGraph.addConceptByKeyIfNotExists(conceptKey, {
                                 description: conceptKey,
-                                refId: refId
+                                isUnknown: false
                             })
                         } else {
                             this._fillNodesRecursively(relatedConcept, conceptGraph)
