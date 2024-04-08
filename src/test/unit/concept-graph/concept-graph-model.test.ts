@@ -137,7 +137,7 @@ describe(ConceptGraph, () => {
             expect(model).toEqual(originalModel)
         })
 
-        xit('should convert graph with cyclic relations', () => {
+        it('should convert graph with cyclic relations', () => {
             const originalModel: ConceptGraphModel = {
                 'sky': {
                     '-attr->': {
