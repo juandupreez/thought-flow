@@ -11,13 +11,9 @@ export class RuleService {
 
   async appyRule (rule: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph> {
     const hypothesis: ConceptGraph = rule.getConceptDefinitionByRelationType('has_hypothesis')
-    glog().debug('Hypothesis')
-    glog().debug('\t', hypothesis.nodes())
-    glog().debug('\t', hypothesis.edges())
+    glog().debug('Hypothesis', hypothesis.toStringifiedModel())
     const conclusion: ConceptGraph = rule.getConceptDefinitionByRelationType('has_conclusion')
-    glog().debug('Conclusion')
-    glog().debug('\t', conclusion.nodes())
-    glog().debug('\t', conclusion.edges())
+    glog().debug('Conclusion', conclusion.toStringifiedModel())
     const possibleMatchesWithHypothesis: ConceptGraph[] = this.conceptMatchService.getMatches(hypothesis, args, { shouldIncludeQueryInResult: true })
     if (possibleMatchesWithHypothesis.length === 0) {
       return new ConceptGraph()
@@ -25,9 +21,7 @@ export class RuleService {
     glog().debug('Number of Matches', possibleMatchesWithHypothesis.length)
 
     const firstMatchWithHypothesis: ConceptGraph = possibleMatchesWithHypothesis[0]
-    glog().debug('First Match with Hypothesis')
-    glog().debug('\t', firstMatchWithHypothesis.nodes())
-    glog().debug('\t', firstMatchWithHypothesis.edges())
+    glog().debug('First Match with Hypothesis', firstMatchWithHypothesis.toStringifiedModel())
 
     const result: ConceptGraph = new ConceptGraph()
 
@@ -52,18 +46,18 @@ export class RuleService {
             matchedRelationId: string, matchedRelation,
             matchedSourceConceptId, matchedTargetConceptId,
             matchedSourceConcept, matchedTargetConcept) => {
-              if (matchedRelation.type === 'matches') {
-                matchedConceptId = matchedTargetConceptId
-              }
+            if (matchedRelation.type === 'matches') {
+              matchedConceptId = matchedTargetConceptId
+            }
           })
-          if (matchedConceptId === undefined ) {
+          if (matchedConceptId === undefined) {
             result.addConceptByIdIfNotExists(conclusionSourceConceptId, conclusionSourceConcept)
             result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptId, conclusionTargetConceptId)
           } else {
             const matchedConcept: Concept = firstMatchWithHypothesis.getNodeAttributes(matchedConceptId)
             result.addConceptByIdIfNotExists(matchedConceptId, matchedConcept)
             result.addRelationByTypeIfNotExists(conclusionRelation.type, matchedConceptId, conclusionTargetConceptId)
-          
+
           }
         }
 
@@ -83,18 +77,18 @@ export class RuleService {
             matchedRelationId: string, matchedRelation,
             matchedSourceConceptId, matchedTargetConceptId,
             matchedSourceConcept, matchedTargetConcept) => {
-              if (matchedRelation.type === 'matches') {
-                matchedConceptId = matchedTargetConceptId
-              }
+            if (matchedRelation.type === 'matches') {
+              matchedConceptId = matchedTargetConceptId
+            }
           })
-          if (matchedConceptId === undefined ) {
+          if (matchedConceptId === undefined) {
             result.addConceptByIdIfNotExists(conclusionTargetConceptId, conclusionTargetConcept)
             result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptId, conclusionTargetConceptId)
           } else {
             const matchedConcept: Concept = firstMatchWithHypothesis.getNodeAttributes(matchedConceptId)
             result.addConceptByIdIfNotExists(matchedConceptId, matchedConcept)
             result.addRelationByTypeIfNotExists(conclusionRelation.type, conclusionSourceConceptId, matchedConceptId)
-          
+
           }
         }
 
@@ -114,9 +108,7 @@ export class RuleService {
       }
     })
 
-    glog().debug('Result')
-    glog().debug('\t', result.nodes())
-    glog().debug('\t', result.edges())
+    glog().debug('Result', result.toStringifiedModel())
 
     return result
   }
