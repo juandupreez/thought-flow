@@ -283,7 +283,34 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         return conceptModel
     }
 
-    // toString (): string {
-    //     const conceptGraphModel: ConceptGraphModel = this._
-    // }
+    replaceConcept (existingConceptId: string, newConceptId: string, newConcept: Concept) {
+
+        this.addConceptByIdIfNotExists(newConceptId, newConcept)
+
+        // Add new relations copying existing relations
+        this.forEachEdge(existingConceptId, (existingRelationId, existingRelation, sourceConceptId, targetConceptId, sourceConcept, targetConcept) => {
+            const direction: 'sourceToTarget' | 'targetToSource' = existingConceptId === sourceConceptId ? 'sourceToTarget' : 'targetToSource'
+            const neighbourConceptId: string = direction === 'sourceToTarget' ? targetConceptId : sourceConceptId
+            const neighbourConcept: Concept = direction === 'sourceToTarget' ? targetConcept : sourceConcept
+
+            this.addRelationByTypeIfNotExists(existingRelation.type, newConceptId, neighbourConceptId)
+        })
+
+        this.forceDeleteConceptAndRelations(existingConceptId)
+
+    }
+
+    forceDeleteConceptAndRelations (conceptId: string) {
+        const relationIdsToDelete: string[] = this.getRelationsForConcept(conceptId)
+        for (const relationIdToDelete of relationIdsToDelete) {
+            this.dropEdge(relationIdToDelete)
+        }
+
+        this.dropNode(conceptId)
+
+    }
+
+    getRelationsForConcept (conceptId: string): string[] {
+        return this.filterEdges(conceptId, () => { })
+    }
 }

@@ -1,0 +1,26 @@
+
+NODE {
+    conceptId
+}
+
+EDGE {
+    relationId
+    fromConceptId
+    toConceptId
+}
+
+
+
+Data:
+NODE
+| sky |
+
+EDGE
+| |
+
+Query:
+{'sky': {}}
+
+SELECT *
+FROM NODE
+WHERE conceptId IN (query.nodes())

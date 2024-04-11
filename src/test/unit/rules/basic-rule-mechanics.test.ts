@@ -1,4 +1,5 @@
 import { ConceptGraph } from "../../../main/core/ConceptGraph"
+import { ConceptGraphModel } from "../../../main/model/ConceptGraphModel"
 import { RuleService } from "../../../main/service/RuleService"
 import { LogLevel, glog } from "../../../main/util/Logger"
 
@@ -22,7 +23,8 @@ describe('Basic Rules', () => {
                     }
                 },
                 '-has_conclusion->': {
-                    '?unknown_001': {
+                    '?unknown_002': {
+                        '<-becomes-': '?unknown_001',
                         '-attr->': {
                             "blue": {
                                 "<-has_conclusion-": "blue_rule"
@@ -34,21 +36,124 @@ describe('Basic Rules', () => {
             }
         })
         // Argument: sky is blue
-        const args: ConceptGraph = ConceptGraph.fromModel({
-            'sky': {
-                '-attr->': 'light_blue'
-            }
-        })
+        const args: ConceptGraph = ConceptGraph.fromModel({ 'sky': { '-attr->': 'light_blue' } })
 
         const result: ConceptGraph = await ruleService.appyRule(rule, args)
 
+        const expectedResultModel: ConceptGraphModel = { 'sky': { '-attr->': 'blue' } }
+        expect(result.toModel('sky')).toEqual(expectedResultModel)
 
-        // console.log(JSON.stringify(result.toJSON(), null, 2))
-        console.log('\n\nTest Result')
-        console.log('\tTransformed From:')
-        console.log('\t\t', args.toModel('sky'))
-        console.log('\tTo:')
-        console.log('\t\t', result.toModel('sky'))
+
+    })
+
+    it('should apply rule where conclusing concept is: unknown-attr->known', async () => {
+        // Rule: everything that is light blue is also blue
+        const rule: ConceptGraph = ConceptGraph.fromModel({
+            "blue_rule": {
+                '-has_hypothesis->': {
+                    '?unknown_001': {
+                        '-attr->': {
+                            "light_blue": {
+                                "<-has_hypothesis-": "blue_rule"
+                            }
+                        }
+                    }
+                },
+                '-has_conclusion->': {
+                    '?unknown_002': {
+                        '<-becomes-': '?unknown_001',
+                        '-attr->': {
+                            "blue": {
+                                "<-has_conclusion-": "blue_rule"
+                            }
+                        }
+                    }
+                }
+
+            }
+        })
+        // Argument: sky is blue
+        const args: ConceptGraph = ConceptGraph.fromModel({ 'sky': { '-attr->': 'light_blue' } })
+
+        const result: ConceptGraph = await ruleService.appyRule(rule, args)
+
+        const expectedResultModel: ConceptGraphModel = { 'sky': { '-attr->': 'blue' } }
+        expect(result.toModel('sky')).toEqual(expectedResultModel)
+
+
+    })
+
+    fit('should apply rule where conclusing concept is: known-attr->unkown', async () => {
+        // Rule: if sky has an attribute then a cloud has the same attribute
+        const rule: ConceptGraph = ConceptGraph.fromModel({
+            "blue_rule": {
+                '-has_hypothesis->': {
+                    'sky': {
+                        '-attr->': {
+                            "?attribute_001": {
+                                "<-has_hypothesis-": "blue_rule"
+                            }
+                        }
+                    }
+                },
+                '-has_conclusion->': {
+                    'cloud': {
+                        '-attr->': {
+                            "?attribute_002": {
+                                '<-becomes-': '?attribute_001',
+                                "<-has_conclusion-": "blue_rule"
+                            }
+                        }
+                    }
+                }
+
+            }
+        })
+        // Argument: sky is blue
+        const args: ConceptGraph = ConceptGraph.fromModel({ 'sky': { '-attr->': 'blue' } })
+
+        const result: ConceptGraph = await ruleService.appyRule(rule, args)
+
+        const expectedResultModel: ConceptGraphModel = { 'cloud': { '-attr->': 'blue' } }
+        expect(result.toModel('cloud')).toEqual(expectedResultModel)
+
+
+    })
+
+    it('should apply rule where conclusing concept is: unknown-attr->unkown', async () => {
+        // Rule: if anything has an attribute, anything is attribute
+        const rule: ConceptGraph = ConceptGraph.fromModel({
+            "blue_rule": {
+                '-has_hypothesis->': {
+                    '?unknown_001': {
+                        '-attr->': {
+                            "?attribute_001": {
+                                "<-has_hypothesis-": "blue_rule"
+                            }
+                        }
+                    }
+                },
+                '-has_conclusion->': {
+                    '?unknown_002': {
+                        '<-becomes-': '?unknown_001',
+                        '-is->': {
+                            "?attribute_002": {
+                                '<-becomes-': '?attribute_001',
+                                "<-has_conclusion-": "blue_rule"
+                            }
+                        }
+                    }
+                }
+
+            }
+        })
+        // Argument: sky has attribute blue
+        const args: ConceptGraph = ConceptGraph.fromModel({ 'sky': { '-attr->': 'blue' } })
+
+        const result: ConceptGraph = await ruleService.appyRule(rule, args)
+
+        const expectedResultModel: ConceptGraphModel = { 'sky': { '-is->': 'blue' } }
+        expect(result.toModel('sky')).toEqual(expectedResultModel)
 
 
     })

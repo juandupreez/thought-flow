@@ -1,5 +1,7 @@
+export type RelationKeyWithArrows = `-${string}->` | `<-${string}-`
+
 export interface ConceptGraphModel {
     [conceptId: string]: {
-        [relationKey: `-${string}->` | `<-${string}-`]: string | ConceptGraphModel
+        [relationKey: RelationKeyWithArrows]: string | ConceptGraphModel
     }
 }
