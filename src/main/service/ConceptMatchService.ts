@@ -151,28 +151,30 @@ export class ConceptMatchService {
         }
 
         for (const possibleCombination of possibleCombinations) {
-            const possibleMatch: ConceptGraph = new ConceptGraph()
-            query.forEachNode((conceptId, concept) => {
-                const matchedDataConceptId: string = concept.isUnknown === true ? possibleCombination[conceptId] : conceptId
-                const matchedDataConcept: Concept = data.getNodeAttributes(matchedDataConceptId)
-                possibleMatch.addConceptByIdIfNotExists(matchedDataConceptId, matchedDataConcept)
-            })
-            query.forEachEdge((queryRelationId, queryRelation, querySourceId, queryTargetId, querySource, queryTarget) => {
-                const sourceMatchedDataConceptId: string = querySource.isUnknown === true ? possibleCombination[querySourceId] : querySourceId
-                const targetMatchedDataConceptId: string = queryTarget.isUnknown === true ? possibleCombination[queryTargetId] : queryTargetId
+            if (Object.keys(possibleCombination).length === ctx.unknownQueryConceptIds.length) { // should match all concepts
+                const possibleMatch: ConceptGraph = new ConceptGraph()
+                query.forEachNode((conceptId, concept) => {
+                    const matchedDataConceptId: string = concept.isUnknown === true ? possibleCombination[conceptId] : conceptId
+                    const matchedDataConcept: Concept = data.getNodeAttributes(matchedDataConceptId)
+                    possibleMatch.addConceptByIdIfNotExists(matchedDataConceptId, matchedDataConcept)
+                })
+                query.forEachEdge((queryRelationId, queryRelation, querySourceId, queryTargetId, querySource, queryTarget) => {
+                    const sourceMatchedDataConceptId: string = querySource.isUnknown === true ? possibleCombination[querySourceId] : querySourceId
+                    const targetMatchedDataConceptId: string = queryTarget.isUnknown === true ? possibleCombination[queryTargetId] : queryTargetId
 
-                data.forEachEdge(((dataRelationId, dataRelation, dataSourceId, dataTargetId, dataSource, dataTarget) => {
-                    const doesDataEdgeMatchQuery: boolean = sourceMatchedDataConceptId === dataSourceId
-                        && queryRelation.type === dataRelation.type
-                        && targetMatchedDataConceptId === dataTargetId
-                    if (doesDataEdgeMatchQuery) {
-                        possibleMatch.addEdgeWithKey(dataRelationId, dataSourceId, dataTargetId, dataRelation)
-                    }
-                }))
+                    data.forEachEdge(((dataRelationId, dataRelation, dataSourceId, dataTargetId, dataSource, dataTarget) => {
+                        const doesDataEdgeMatchQuery: boolean = sourceMatchedDataConceptId === dataSourceId
+                            && queryRelation.type === dataRelation.type
+                            && targetMatchedDataConceptId === dataTargetId
+                        if (doesDataEdgeMatchQuery) {
+                            possibleMatch.addEdgeWithKey(dataRelationId, dataSourceId, dataTargetId, dataRelation)
+                        }
+                    }))
 
 
-            })
-            possibleMatches.push(possibleMatch)
+                })
+                possibleMatches.push(possibleMatch)
+            }
         }
 
         return possibleMatches
@@ -196,7 +198,7 @@ export class ConceptMatchService {
         } else {
             const curLevelCombinations: { [unknownConceptId: string]: string }[] = []
 
-            const curUnkownConceptId: string | undefined = unknownQueryConceptIds.shift()
+            const curUnkownConceptId: string | undefined = unknownQueryConceptIds[0]
             if (curUnkownConceptId !== undefined) {
                 for (const possibleDataConcept of possibleDataConcepts) {
 
@@ -206,7 +208,7 @@ export class ConceptMatchService {
                             return singleDataConceptId !== possibleDataConcept
                         })
                         const downstreamCombinations: { [unknownConceptId: string]: string }[] = this._recursivelyGetUnknownCombinations(
-                            unknownQueryConceptIds, dataConceptIdsNotPickedYet, query, data
+                            [...unknownQueryConceptIds.slice(1)], dataConceptIdsNotPickedYet, query, data
                         )
                         for (const downstreamCombination of downstreamCombinations) {
                             const doDataConceptRelationsMatchQueryUnknownConsidieringDownstream: boolean =
@@ -228,24 +230,90 @@ export class ConceptMatchService {
         let doMatch: boolean = true
         query.forEachOutEdge(queryConceptId, (queryRelationId, queryRelation, querySourceId, queryTargetId, querySource, queryTarget) => {
 
-            if (queryTarget.isUnknown !== true || unknownMatchMap[queryTargetId] !== undefined) {
-                const neighbourQueryConceptId: string = unknownMatchMap[queryTargetId] ?? queryTargetId
+            // if (queryTarget.isUnknown !== true || unknownMatchMap[queryTargetId] !== undefined) {
+            //     const neighbourQueryConceptId: string = unknownMatchMap[queryTargetId] ?? queryTargetId
+            //     const outRelationId: string | undefined = data.findOutEdge(dataConceptId, (dataRelationId, dataRelation, dataSourceId, dataTargetId, dataSource, dataTarget) => {
+            //         return dataRelation.type === queryRelation.type && dataTargetId === neighbourQueryConceptId
+            //     })
+            //     if (outRelationId === undefined) {
+            //         doMatch = false
+            //     }
+            // } else {
+            //     const outRelationId: string | undefined = data.findOutEdge(dataConceptId, (dataRelationId, dataRelation, dataSourceId, dataTargetId, dataSource, dataTarget) => {
+            //         return dataRelation.type === queryRelation.type && dataTargetId === queryTargetId
+            //     })
+            //     if (outRelationId === undefined) {
+            //         doMatch = false
+            //     }
+            // }
+            if (queryTarget.isUnknown !== true) {
                 const outRelationId: string | undefined = data.findOutEdge(dataConceptId, (dataRelationId, dataRelation, dataSourceId, dataTargetId, dataSource, dataTarget) => {
-                    return dataRelation.type === queryRelation.type && dataTargetId === neighbourQueryConceptId
+                    return dataRelation.type === queryRelation.type && dataTargetId === queryTargetId
                 })
                 if (outRelationId === undefined) {
                     doMatch = false
                 }
+            } else {
+
+                if (unknownMatchMap[queryTargetId] !== undefined) {
+                    const outRelationId: string | undefined = data.findOutEdge(dataConceptId, (dataRelationId, dataRelation, dataSourceId, dataTargetId, dataSource, dataTarget) => {
+                        return dataRelation.type === queryRelation.type && dataTargetId === unknownMatchMap[queryTargetId]
+                    })
+                    if (outRelationId === undefined) {
+                        doMatch = false
+                    }
+                } else {
+                    const outRelationId: string | undefined = data.findOutEdge(dataConceptId, (dataRelationId, dataRelation, dataSourceId, dataTargetId, dataSource, dataTarget) => {
+                        return dataRelation.type === queryRelation.type
+                    })
+                    if (outRelationId === undefined) {
+                        doMatch = false
+                    }
+                }
             }
         })
         query.forEachInEdge(queryConceptId, (queryRelationId, queryRelation, querySourceId, queryTargetId, querySource, queryTarget) => {
-            if (queryTarget.isUnknown !== true || unknownMatchMap[querySourceId] !== undefined) {
-                const neighbourQueryConceptId: string = unknownMatchMap[querySourceId] ?? querySourceId
+            // if (queryTarget.isUnknown !== true || unknownMatchMap[querySourceId] !== undefined) {
+            //     const neighbourQueryConceptId: string = unknownMatchMap[querySourceId] ?? querySourceId
+
+            //     const outRelationId: string | undefined = data.findInEdge(dataConceptId, (dataRelationId, dataRelation, dataSourceId, dataTargetId, dataSource, dataTarget) => {
+            //         return dataRelation.type === queryRelation.type && dataSourceId === neighbourQueryConceptId
+            //     })
+            //     if (outRelationId === undefined) {
+            //         doMatch = false
+            //     }
+            // } else {
+            //     const outRelationId: string | undefined = data.findInEdge(dataConceptId, (dataRelationId, dataRelation, dataSourceId, dataTargetId, dataSource, dataTarget) => {
+            //         return dataRelation.type === queryRelation.type && dataSourceId === querySourceId
+            //     })
+            //     if (outRelationId === undefined) {
+            //         doMatch = false
+            //     }
+            // }
+
+            if (querySource.isUnknown !== true) {
                 const outRelationId: string | undefined = data.findInEdge(dataConceptId, (dataRelationId, dataRelation, dataSourceId, dataTargetId, dataSource, dataTarget) => {
-                    return dataRelation.type === queryRelation.type && dataSourceId === neighbourQueryConceptId
+                    return dataRelation.type === queryRelation.type && dataSourceId === querySourceId
                 })
                 if (outRelationId === undefined) {
                     doMatch = false
+                }
+            } else {
+
+                if (unknownMatchMap[querySourceId] !== undefined) {
+                    const outRelationId: string | undefined = data.findInEdge(dataConceptId, (dataRelationId, dataRelation, dataSourceId, dataTargetId, dataSource, dataTarget) => {
+                        return dataRelation.type === queryRelation.type && dataSourceId === unknownMatchMap[querySourceId]
+                    })
+                    if (outRelationId === undefined) {
+                        doMatch = false
+                    }
+                } else {
+                    const outRelationId: string | undefined = data.findInEdge(dataConceptId, (dataRelationId, dataRelation, dataSourceId, dataTargetId, dataSource, dataTarget) => {
+                        return dataRelation.type === queryRelation.type
+                    })
+                    if (outRelationId === undefined) {
+                        doMatch = false
+                    }
                 }
             }
         })

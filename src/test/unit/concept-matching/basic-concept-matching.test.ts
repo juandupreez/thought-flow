@@ -230,7 +230,7 @@ describe(ConceptMatchService, () => {
             })
         })
 
-       it('should match relation with single unknown variable in query', () => {
+        it('should match relation with single unknown variable in query', () => {
             const data: ConceptGraph = ConceptGraph.fromModel({
                 'sky': { '-is->': 'blue' }
             })
@@ -492,31 +492,210 @@ describe(ConceptMatchService, () => {
 
     })
 
-    xdescribe('deep matches', () => {
+    describe('deep matches', () => {
+        const conplexModel: ConceptGraphModel = {
+            'sky': {
+                '-has_attribute->': {
+                    'blue': {
+                        '-is_a->': 'colour'
+                    }
+                }
+            },
+            'sea': {
+                '-has_attribute->': 'blue'
+            },
+            'raiden': {
+                '-is_a->': {
+                    'video game character': {
 
-        it('should match two levels deep concept', () => {
-            const data: ConceptGraph = new ConceptGraph()
-            data.addNode('sky', { description: 'sky' })
-            data.addNode('blue', { description: 'blue' })
-            data.addNode('colour', { description: 'colour' })
-            data.addEdgeWithKey(1, 'sky', 'blue', { type: 'some_relation' })
-            data.addEdgeWithKey(2, 'blue', 'colour', { type: 'some_relation' })
+                    }
+                },
+                '-equals->': 'raiden',
+                '-has->': {
+                    'raiden_identity': {
+                        '-instance_of->': 'identity',
+                        '-comprises->': {
+                            'raiden_the_word': {
+                                '-is_a->': 'word',
+                                '-instance_of->': 'name'
+                            },
+                            'female': {
+                                '-subtype_of->': {
+                                    'gender': {
+                                        '<-subtype_of-': 'male'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    'physical_attributes': {
+                        '-comprises->': {
+                            'hair': {
+                                '-has_attribute->': {
+                                    'purple': {
+                                        '-is_a->': 'colour'
+                                    }
+                                }
+                            },
+                            'clothes': {
+                                '-has_attribute->': 'purple'
+                            }
+                        }
+                    },
+                    'personality': {
+                        '-comprises->': {
+                            'serious': {
+                                '-instance_of->': 'demeanor'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        const data: ConceptGraph = ConceptGraph.fromModel(conplexModel)
 
-            const query: ConceptGraph = new ConceptGraph()
-            query.addNode('unknown_001', { description: 'unknown', isUnknown: true })
-            query.addNode('blue', { description: 'blue' })
-            query.addNode('colour', { description: 'colour' })
-            query.addEdgeWithKey(1, 'unknown_001', 'blue', { type: 'some_relation' }) // unknown is blue
-            query.addEdgeWithKey(2, 'blue', 'colour', { type: 'some_relation' }) // blue is a colour
-            const matches: ConceptGraph[] = matcher.getMatches(query, data)
+        it('should do exact match two levels deep', () => {
+            const query: ConceptGraph = ConceptGraph.fromModel({
+                'raiden': {
+                    '-has->': {
+                        'raiden_identity': {
+                            '-comprises->':
+                                'raiden_the_word'
+                        }
+                    }
+                }
+            })
 
-            const expectedAnswer: ConceptGraph = new ConceptGraph()
-            expectedAnswer.addNode('sky', { description: 'sky' })
-            expectedAnswer.addNode('blue', { description: 'blue' })
-            expectedAnswer.addNode('colour', { description: 'colour' })
-            expectedAnswer.addEdgeWithKey(1, 'sky', 'blue', { type: 'some_relation' })
-            expectedAnswer.addEdgeWithKey(2, 'blue', 'colour', { type: 'some_relation' })
-            expect(matches[0].toJSON()).toEqual(expectedAnswer.toJSON())
+            const matches: ConceptGraphModel[] = matcher.getMatches(query, data)
+                .map((singleMatch) => { return singleMatch.toModel() })
+
+            expect(matches.length).toEqual(1)
+            expect(matches[0]).toEqual({
+                'raiden': {
+                    '-has->': {
+                        'raiden_identity': {
+                            '-comprises->':
+                                'raiden_the_word'
+                        }
+                    }
+                }
+            })
         })
+
+        it('should do match with unknowns two levels deep', () => {
+            const query: ConceptGraph = ConceptGraph.fromModel({
+                'raiden': {
+                    '-has->': {
+                        '?unknown_identity': {
+                            '-instance_of->': 'identity',
+                            '-comprises->': {
+                                '?unknown_word': {
+                                    '-is_a->': 'word',
+                                    '-instance_of->': 'name'
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+
+            const matches: ConceptGraphModel[] = matcher.getMatches(query, data)
+                .map((singleMatch) => { return singleMatch.toModel() })
+
+            expect(matches.length).toEqual(1)
+            expect(matches[0]).toEqual({
+                'raiden': {
+                    '-has->': {
+                        'raiden_identity': {
+                            '-comprises->': {
+                                'raiden_the_word': {
+                                    '-is_a->': 'word',
+                                    '-instance_of->': 'name'
+                                }
+                            },
+                            '-instance_of->': 'identity'
+                        }
+                    }
+                }
+            })
+        })
+
+        it('should match reflexive relationship', () => {
+            const query: ConceptGraph = ConceptGraph.fromModel({
+                '?unknown_001': { '-equals->': '?unknown_001' }
+            })
+
+            const matches: ConceptGraphModel[] = matcher.getMatches(query, data)
+                .map((singleMatch) => { return singleMatch.toModel() })
+
+            expect(matches.length).toEqual(1)
+            expect(matches[0]).toEqual({
+                'raiden': { '-equals->': 'raiden' }
+            })
+        })
+
+        it('should match cycle', () => {
+            const query: ConceptGraph = ConceptGraph.fromModel({
+                '?unknown_hair': {
+                    '-has_attribute->': '?unknown_purple',
+                    '<-comprises-': {
+                        '?unknown_physical_attributes': {
+                            '-comprises->': {
+                                '?unknown_clothes': {
+                                    '-has_attribute->': {
+                                        '?unknown_purple': {
+                                            '-is_a->': 'colour'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+
+            const matches: ConceptGraphModel[] = matcher.getMatches(query, data)
+                .map((singleMatch) => { return singleMatch.toModel() })
+
+            expect(matches.length).toEqual(2)
+            expect(matches[0]).toEqual({
+                "hair": {
+                    "-has_attribute->": {
+                        "purple": {
+                            "-is_a->": "colour",
+                            "<-has_attribute-": {
+                                "clothes": {
+                                    "<-comprises-": {
+                                        "physical_attributes": {
+                                            "-comprises->": "hair"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+            expect(matches[1]).toEqual({
+                "clothes": {
+                    "-has_attribute->": {
+                        "purple": {
+                            "-is_a->": "colour",
+                            "<-has_attribute-": {
+                                "hair": {
+                                    "<-comprises-": {
+                                        "physical_attributes": {
+                                            "-comprises->": "clothes"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+        })
+
+
     })
 })
