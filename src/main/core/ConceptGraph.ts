@@ -3,7 +3,7 @@ import { Concept } from "../model/Concept"
 import { Relation } from "../model/Relation"
 import { IdGenerator } from "../util/IdGenerator"
 import { ConceptGraphModel } from "../model/ConceptGraphModel"
-import { parseConceptIdAndIsUnknown } from "../util/common"
+import { isConceptUnknown, parseConceptIdAndIsUnknown } from "../util/common"
 
 export class ConceptGraph extends Graph<Concept, Relation> {
 
@@ -301,7 +301,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
     }
 
     forceDeleteConceptAndRelations (conceptId: string) {
-        const relationIdsToDelete: string[] = this.getRelationsForConcept(conceptId)
+        const relationIdsToDelete: string[] = this.getRelationIdsForConcept(conceptId)
         for (const relationIdToDelete of relationIdsToDelete) {
             this.dropEdge(relationIdToDelete)
         }
@@ -310,7 +310,66 @@ export class ConceptGraph extends Graph<Concept, Relation> {
 
     }
 
-    getRelationsForConcept (conceptId: string): string[] {
-        return this.filterEdges(conceptId, () => { })
+    getRelationIdsForConcept (conceptId: string): string[] {
+        return this.filterEdges(conceptId, () => { return true })
+    }
+
+    isUnknownConcept (conceptId: string): boolean {
+        const doesExist: boolean = this.nodes().includes(conceptId)
+        if (doesExist) {
+            return isConceptUnknown(this.getNodeAttributes(conceptId))
+        } else {
+            return false
+        }
+    }
+
+    forEachRelationAndNeighbour (queryConceptId: string, cb: (relationId: string, relation: Relation, neighbourConceptId: string, neighbourConcept: Concept) => void) {
+        this.forEachEdge((edgeId: string, edgeAttributes: Relation, sourceId: string, targetId: string, source: Concept, target: Concept) => {
+            if (queryConceptId === sourceId) {
+                cb(edgeId, edgeAttributes, targetId, target)
+            } else if (queryConceptId === targetId) {
+                cb(edgeId, edgeAttributes, sourceId, source)
+            }
+        })
+    }
+
+    findRelation (relationQuery: { conceptId?: string; neighbourConceptId?: string; type?: string }): string | undefined {
+        return this.findEdge((relationId, relation, sourceConceptId, targetConceptId) => {
+            return (
+                (
+                    (relationQuery.conceptId ?? sourceConceptId) === sourceConceptId
+                    &&
+                    (relationQuery.neighbourConceptId ?? targetConceptId) === targetConceptId
+                )
+                ||
+                (
+                    (relationQuery.conceptId ?? targetConceptId) === targetConceptId
+                    &&
+                    (relationQuery.neighbourConceptId ?? sourceConceptId) === sourceConceptId)
+            )
+                && (this.type ?? relation.type) === relation.type
+        })
+    }
+
+    filterRelationIds (relationQuery: { conceptId?: string; neighbourConceptId?: string; type?: string }): string[] {
+        return this.filterEdges((relationId, relation, sourceConceptId, targetConceptId) => {
+            return (
+                (
+                    (relationQuery.conceptId ?? sourceConceptId) === sourceConceptId
+                    &&
+                    (relationQuery.neighbourConceptId ?? targetConceptId) === targetConceptId
+                )
+                ||
+                (
+                    (relationQuery.conceptId ?? targetConceptId) === targetConceptId
+                    &&
+                    (relationQuery.neighbourConceptId ?? sourceConceptId) === sourceConceptId)
+            )
+                && (relationQuery.type ?? relation.type) === relation.type
+        })
+    }
+    
+    doesConceptIdExist (conceptId: string): boolean {
+        return this.nodes().includes(conceptId)
     }
 }

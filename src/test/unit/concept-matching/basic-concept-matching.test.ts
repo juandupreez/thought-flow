@@ -230,7 +230,7 @@ describe(ConceptMatchService, () => {
             })
         })
 
-        it('should match relation with single unknown variable in query', () => {
+       it('should match relation with single unknown variable in query', () => {
             const data: ConceptGraph = ConceptGraph.fromModel({
                 'sky': { '-is->': 'blue' }
             })
@@ -312,7 +312,71 @@ describe(ConceptMatchService, () => {
             expect(matches).toContainEqual({ 'tree': { '-is->': 'plant' } })
         })
 
-        xit('should match single concept with several outgoing relations to other concepts', () => {
+        it('should match single concept with two outgoing relations of the same type (all nodes are exact matches)', () => {
+            const data: ConceptGraph = ConceptGraph.fromModel({
+                'sky': {
+                    '-is->': {
+                        'blue': {},
+                        'beautiful': {}
+                    }
+                },
+            })
+            const query: ConceptGraph = ConceptGraph.fromModel({
+                'sky': {
+                    '-is->': {
+                        'blue': {},
+                        'beautiful': {}
+                    }
+                },
+            })
+
+            const matches: ConceptGraphModel[] = matcher.getMatches(query, data)
+                .map((singleMatch) => { return singleMatch.toModel('sky') })
+
+            expect(matches.length).toEqual(1)
+            expect(matches).toContainEqual({
+                'sky': {
+                    '-is->': {
+                        'blue': {},
+                        'beautiful': {}
+                    }
+                },
+            })
+        })
+
+        it('should match single concept with two outgoing relations of the same type', () => {
+            const data: ConceptGraph = ConceptGraph.fromModel({
+                'sky': {
+                    '-is->': {
+                        'blue': {},
+                        'beautiful': {}
+                    }
+                },
+            })
+            const query: ConceptGraph = ConceptGraph.fromModel({
+                '?unknown_001': {
+                    '-is->': {
+                        'blue': {},
+                        'beautiful': {}
+                    }
+                },
+            })
+
+            const matches: ConceptGraphModel[] = matcher.getMatches(query, data)
+                .map((singleMatch) => { return singleMatch.toModel('sky') })
+
+            expect(matches.length).toEqual(1)
+            expect(matches).toContainEqual({
+                'sky': {
+                    '-is->': {
+                        'blue': {},
+                        'beautiful': {}
+                    }
+                },
+            })
+        })
+
+        it('should match single concept with several outgoing relations to other concepts', () => {
             const data: ConceptGraph = ConceptGraph.fromModel({
                 'sky': {
                     '-is->': {
@@ -349,7 +413,7 @@ describe(ConceptMatchService, () => {
             })
         })
 
-        xit('should match single concept to concept relationship even if there is a cyclic relationship', () => {
+        it('should match single concept to concept relationship even if there is a cyclic relationship', () => {
             const data: ConceptGraph = ConceptGraph.fromModel({
                 'sky': {
                     '-is->': {
@@ -373,7 +437,7 @@ describe(ConceptMatchService, () => {
             })
         })
 
-        xit('should match full cyclic relationship', () => {
+        it('should match full cyclic relationship', () => {
             const data: ConceptGraph = ConceptGraph.fromModel({
                 'sky': {
                     '-is->': {
@@ -409,59 +473,21 @@ describe(ConceptMatchService, () => {
             })
         })
 
-        xit('should match single concept to concept relationship in other direction as well', () => {
-            const data: ConceptGraph = new ConceptGraph()
-            data.addNode(1, { description: 'sky' })
-            data.addNode(2, { description: 'blue' })
-            data.addNode(3, { description: 'yellow' })
-            data.addEdgeWithKey(1, 1, 2, { type: 'some_relation' })
-            data.addEdgeWithKey(2, 2, 1, { type: 'some_relation' })
-            data.addEdgeWithKey(3, 1, 3, { type: 'some_relation' })
+        it('should match single concept to concept relationship in other direction as well', () => {
+            const data: ConceptGraph = ConceptGraph.fromModel({
+                'blue': { '<-is-': 'sky' }
+            })
+            const query: ConceptGraph = ConceptGraph.fromModel({
+                'blue': { '<-is-': 'sky' }
+            })
 
-            const query: ConceptGraph = new ConceptGraph()
-            query.addNode(1, { description: 'unknown', isUnknown: true })
-            query.addNode(2, { description: 'blue' })
-            query.addEdgeWithKey(1, 2, 1, { type: 'some_relation' })
-            const matches: ConceptGraph[] = matcher.getMatches(query, data)
+            const matches: ConceptGraphModel[] = matcher.getMatches(query, data)
+                .map((singleMatch) => { return singleMatch.toModel() })
 
-            const expectedAnswer: ConceptGraph = new ConceptGraph()
-            expectedAnswer.addNode(2, { description: 'blue' })
-            expectedAnswer.addNode(1, { description: 'sky' })
-            expectedAnswer.addEdgeWithKey(2, 2, 1, { type: 'some_relation' })
-            expect(matches[0].toJSON()).toEqual(expectedAnswer.toJSON())
-        })
-
-        xit('should match multiple concepts', () => {
-            const data: ConceptGraph = new ConceptGraph()
-            data.addNode(1, { description: 'sky' })
-            data.addNode(2, { description: 'blue' })
-            data.addNode(3, { description: 'yellow' })
-            data.addNode(4, { description: 'car' })
-            data.addNode(5, { description: 'sea' })
-            data.addEdgeWithKey(1, 1, 2, { type: 'some_relation' }) // sky is blue
-            data.addEdgeWithKey(2, 1, 3, { type: 'some_relation' }) // sky is yellow
-            data.addEdgeWithKey(3, 4, 3, { type: 'some_relation' }) // car is yellow
-            data.addEdgeWithKey(4, 5, 2, { type: 'some_relation' }) // sea is blue
-
-            const query: ConceptGraph = new ConceptGraph()
-            query.addNode(1, { description: 'unknown', isUnknown: true })
-            query.addNode(2, { description: 'blue' })
-            query.addEdgeWithKey(1, 1, 2, { type: 'some_relation' })
-            const matches: ConceptGraph[] = matcher.getMatches(query, data)
-
-            expect(matches.length).toBe(2)
-
-            const expectedAnswer1: ConceptGraph = new ConceptGraph()
-            expectedAnswer1.addNode(1, { description: 'sky' })
-            expectedAnswer1.addNode(2, { description: 'blue' })
-            expectedAnswer1.addEdgeWithKey(1, 1, 2, { type: 'some_relation' })
-            expect(matches[0].toJSON()).toEqual(expectedAnswer1.toJSON())
-
-            const expectedAnswer2: ConceptGraph = new ConceptGraph()
-            expectedAnswer2.addNode(5, { description: 'sea' })
-            expectedAnswer2.addNode(2, { description: 'blue' })
-            expectedAnswer2.addEdgeWithKey(4, 5, 2, { type: 'some_relation' })
-            expect(matches[1].toJSON()).toEqual(expectedAnswer2.toJSON())
+            expect(matches.length).toEqual(1)
+            expect(matches[0]).toEqual({
+                'blue': { '<-is-': 'sky' }
+            })
         })
 
     })
