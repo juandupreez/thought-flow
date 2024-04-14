@@ -61,42 +61,11 @@ export class ConceptMatchService {
             }
 
 
-            // Run matching alorithm
-            if (query.edges().length === 0) {
-                matches.push(...this._matchNodesOnly(query, data, opts, ctx))
-            } else {
-                matches.push(...this._getMatchesBySelectMethod(query, data, ctx))
-                // matches.push(...this._recursivelyGetPossibleMatches(query, data, randomlyChosenConceptId, opts, ctx))
-                // matches.push(...this._recursivelyGetPossibleMatches(query.toModel(), dataToQuery, opts))
-            }
+            matches.push(...this._getMatchesBySelectMethod(query, data, ctx))
         }
         glog().trace('Matches ', JSON.stringify(matches.map((singleMatch) => { return singleMatch.toModel() }), null, 2))
         glog().trace('|---------END MATCHING-------|\n')
         return matches
-    }
-
-    private _matchNodesOnly (query: ConceptGraph, data: ConceptGraph, opts: MatchingOptions, ctx: RecursiveContext): ConceptGraph[] {
-        const matches: ConceptGraph[] = []
-
-
-        const unknownConceptMatchPermutations: ConceptGraph[] = this._recursivelyGetAllPermutations(
-            ctx.unknownQueryConceptIds, ctx.dataConceptsNotMatchedByKnownConceptIds,
-            query, data
-        )
-        if (unknownConceptMatchPermutations.length > 0) {
-            for (const unknownConceptMatchPermutation of unknownConceptMatchPermutations) {
-                for (const exactDataMatchConceptId of ctx.exactDataMatchConceptIds) {
-                    unknownConceptMatchPermutation.addConceptByIdIfNotExists(exactDataMatchConceptId, data.getNodeAttributes(exactDataMatchConceptId))
-                }
-            }
-        } else {
-            const singleMatchWithOnlyExactMatches: ConceptGraph = new ConceptGraph()
-            for (const exactDataMatchConceptId of ctx.exactDataMatchConceptIds) {
-                singleMatchWithOnlyExactMatches.addConceptByIdIfNotExists(exactDataMatchConceptId, data.getNodeAttributes(exactDataMatchConceptId))
-            }
-            return [singleMatchWithOnlyExactMatches]
-        }
-        return unknownConceptMatchPermutations
     }
 
     private _recursivelyGetAllPermutations (unknownQueryConceptIds: string[], dataConceptIds: string[], query: ConceptGraph, data: ConceptGraph): ConceptGraph[] {
