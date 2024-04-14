@@ -38,7 +38,7 @@ describe('Basic Rules', () => {
         // Argument: sky is blue
         const args: ConceptGraph = ConceptGraph.fromModel({ 'sky': { '-attr->': 'light_blue' } })
 
-        const result: ConceptGraph = await ruleService.appyRule(rule, args)
+        const result: ConceptGraph = await ruleService.applyRuleGetFirstResult(rule, args)
 
         const expectedResultModel: ConceptGraphModel = { 'sky': { '-attr->': 'blue' } }
         expect(result.toModel('sky')).toEqual(expectedResultModel)
@@ -75,7 +75,7 @@ describe('Basic Rules', () => {
         // Argument: sky is blue
         const args: ConceptGraph = ConceptGraph.fromModel({ 'sky': { '-attr->': 'light_blue' } })
 
-        const result: ConceptGraph = await ruleService.appyRule(rule, args)
+        const result: ConceptGraph = await ruleService.applyRuleGetFirstResult(rule, args)
 
         const expectedResultModel: ConceptGraphModel = { 'sky': { '-attr->': 'blue' } }
         expect(result.toModel('sky')).toEqual(expectedResultModel)
@@ -83,7 +83,7 @@ describe('Basic Rules', () => {
 
     })
 
-    fit('should apply rule where conclusing concept is: known-attr->unkown', async () => {
+    it('should apply rule where conclusing concept is: known-attr->unkown', async () => {
         // Rule: if sky has an attribute then a cloud has the same attribute
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "blue_rule": {
@@ -112,10 +112,9 @@ describe('Basic Rules', () => {
         // Argument: sky is blue
         const args: ConceptGraph = ConceptGraph.fromModel({ 'sky': { '-attr->': 'blue' } })
 
-        const result: ConceptGraph = await ruleService.appyRule(rule, args)
+        const result: ConceptGraph = await ruleService.applyRuleGetFirstResult(rule, args)
 
-        const expectedResultModel: ConceptGraphModel = { 'cloud': { '-attr->': 'blue' } }
-        expect(result.toModel('cloud')).toEqual(expectedResultModel)
+        expect(result.toModel('cloud')).toEqual({ 'cloud': { '-attr->': 'blue' } })
 
 
     })
@@ -150,7 +149,7 @@ describe('Basic Rules', () => {
         // Argument: sky has attribute blue
         const args: ConceptGraph = ConceptGraph.fromModel({ 'sky': { '-attr->': 'blue' } })
 
-        const result: ConceptGraph = await ruleService.appyRule(rule, args)
+        const result: ConceptGraph = await ruleService.applyRuleGetFirstResult(rule, args)
 
         const expectedResultModel: ConceptGraphModel = { 'sky': { '-is->': 'blue' } }
         expect(result.toModel('sky')).toEqual(expectedResultModel)

@@ -288,12 +288,11 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         this.addConceptByIdIfNotExists(newConceptId, newConcept)
 
         // Add new relations copying existing relations
-        this.forEachEdge(existingConceptId, (existingRelationId, existingRelation, sourceConceptId, targetConceptId, sourceConcept, targetConcept) => {
-            const direction: 'sourceToTarget' | 'targetToSource' = existingConceptId === sourceConceptId ? 'sourceToTarget' : 'targetToSource'
-            const neighbourConceptId: string = direction === 'sourceToTarget' ? targetConceptId : sourceConceptId
-            const neighbourConcept: Concept = direction === 'sourceToTarget' ? targetConcept : sourceConcept
-
-            this.addRelationByTypeIfNotExists(existingRelation.type, newConceptId, neighbourConceptId)
+        this.forEachOutEdge(existingConceptId, (existingRelationId, existingRelation, sourceConceptId, targetConceptId, sourceConcept, targetConcept) => {
+            this.addRelationByTypeIfNotExists(existingRelation.type, newConceptId, targetConceptId)
+        })
+        this.forEachInEdge(existingConceptId, (existingRelationId, existingRelation, sourceConceptId, targetConceptId, sourceConcept, targetConcept) => {
+            this.addRelationByTypeIfNotExists(existingRelation.type, sourceConceptId, newConceptId)
         })
 
         this.forceDeleteConceptAndRelations(existingConceptId)
@@ -301,12 +300,15 @@ export class ConceptGraph extends Graph<Concept, Relation> {
     }
 
     forceDeleteConceptAndRelations (conceptId: string) {
-        const relationIdsToDelete: string[] = this.getRelationIdsForConcept(conceptId)
-        for (const relationIdToDelete of relationIdsToDelete) {
-            this.dropEdge(relationIdToDelete)
-        }
+        if (this.doesConceptIdExist(conceptId)) {
+            const relationIdsToDelete: string[] = this.getRelationIdsForConcept(conceptId)
+            for (const relationIdToDelete of relationIdsToDelete) {
+                this.dropEdge(relationIdToDelete)
+            }
 
-        this.dropNode(conceptId)
+            this.dropNode(conceptId)
+
+        }
 
     }
 
@@ -368,8 +370,12 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                 && (relationQuery.type ?? relation.type) === relation.type
         })
     }
-    
+
     doesConceptIdExist (conceptId: string): boolean {
         return this.nodes().includes(conceptId)
+    }
+
+    toString (): string {
+        return this.toStringifiedModel()
     }
 }
