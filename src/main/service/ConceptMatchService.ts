@@ -61,49 +61,14 @@ export class ConceptMatchService {
             }
 
 
-            matches.push(...this._getMatchesBySelectMethod(query, data, ctx))
+            matches.push(...this._getMatchesBySelectMethod(query, data, ctx, opts))
         }
         glog().trace('Matches ', JSON.stringify(matches.map((singleMatch) => { return singleMatch.toModel() }), null, 2))
         glog().trace('|---------END MATCHING-------|\n')
         return matches
     }
 
-    private _recursivelyGetAllPermutations (unknownQueryConceptIds: string[], dataConceptIds: string[], query: ConceptGraph, data: ConceptGraph): ConceptGraph[] {
-        if (unknownQueryConceptIds.length === 0 || dataConceptIds.length === 0) {
-            return []
-        } else if (unknownQueryConceptIds.length === 1 && dataConceptIds.length === 1) {
-            const singlePermutation: ConceptGraph = new ConceptGraph()
-            singlePermutation.addConceptByIdIfNotExists(dataConceptIds[0], data.getNodeAttributes(dataConceptIds[0]))
-            return [singlePermutation]
-        } else if (unknownQueryConceptIds.length === 1) {
-            const curLevelPermutations: ConceptGraph[] = []
-            for (const dataConceptId of dataConceptIds) {
-                const singlePermutation: ConceptGraph = new ConceptGraph()
-                singlePermutation.addConceptByIdIfNotExists(dataConceptId, data.getNodeAttributes(dataConceptId))
-                curLevelPermutations.push(singlePermutation)
-            }
-            return curLevelPermutations
-        } else {
-            const curLevelPermutations: ConceptGraph[] = []
-
-            for (const queryConceptId of unknownQueryConceptIds) {
-                const nextQueryConceptIds: string[] = unknownQueryConceptIds
-                nextQueryConceptIds.shift()
-                for (const dataConceptId of dataConceptIds) {
-                    const otherDataConceptIds: string[] = dataConceptIds.filter((singleDataConceptId) => { return singleDataConceptId !== dataConceptId })
-                    const downstreamPermutations: ConceptGraph[] = this._recursivelyGetAllPermutations(nextQueryConceptIds, otherDataConceptIds, query, data)
-                    for (const downstreamPermutation of downstreamPermutations) {
-                        downstreamPermutation.addConceptByIdIfNotExists(dataConceptId, data.getNodeAttributes(dataConceptId))
-                        curLevelPermutations.push(downstreamPermutation)
-                    }
-
-                }
-            }
-            return curLevelPermutations
-        }
-    }
-
-    private _getMatchesBySelectMethod (query: ConceptGraph, data: ConceptGraph, ctx: RecursiveContext): ConceptGraph[] {
+    private _getMatchesBySelectMethod (query: ConceptGraph, data: ConceptGraph, ctx: RecursiveContext, opts: MatchingOptions): ConceptGraph[] {
         const possibleMatches: ConceptGraph[] = []
 
         glog().trace(`Unknowns (${ctx.unknownQueryConceptIds.length}): ` + ctx.unknownQueryConceptIds)
@@ -126,6 +91,10 @@ export class ConceptMatchService {
                     const matchedDataConceptId: string = concept.isUnknown === true ? possibleCombination[conceptId] : conceptId
                     const matchedDataConcept: Concept = data.getNodeAttributes(matchedDataConceptId)
                     possibleMatch.addConceptByIdIfNotExists(matchedDataConceptId, matchedDataConcept)
+                    if (opts.shouldIncludeQueryInResult) {
+                        possibleMatch.addConceptByIdIfNotExists(conceptId, concept)
+                        possibleMatch.addRelationByTypeIfNotExists('matches', conceptId, matchedDataConceptId)
+                    }
                 })
                 query.forEachEdge((queryRelationId, queryRelation, querySourceId, queryTargetId, querySource, queryTarget) => {
                     const sourceMatchedDataConceptId: string = querySource.isUnknown === true ? possibleCombination[querySourceId] : querySourceId
