@@ -11,10 +11,20 @@ export class RuleService {
   private readonly conceptMatchService: ConceptMatchService = new ConceptMatchService()
 
   async applyRuleGetFirstResult (rule: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph> {
-    return (await this.appyRule(rule, args))[0] ?? new ConceptGraph()
+    return (await this.applyRule(rule, args))[0] ?? new ConceptGraph()
+  }
+  async applyRuleToAllMatches (rule: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph> {
+    const allResults: ConceptGraph[] = await this.applyRule(rule, args)
+    const mergedResult: ConceptGraph = new ConceptGraph()
+
+    for (const singleResult of allResults) {
+      mergedResult.mergeFrom(singleResult)
+    }
+
+    return mergedResult
   }
 
-  async appyRule (rule: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph[]> {
+  async applyRule (rule: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph[]> {
     glog().debug('\n|---------START APPLYING RULE-------|')
     glog().debug('Arguments', args.toStringifiedModel())
     const hypothesis: ConceptGraph = rule.getConceptDefinitionByRelationType('has_hypothesis')

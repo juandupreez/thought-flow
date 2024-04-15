@@ -157,4 +157,105 @@ describe('Basic Rules', () => {
 
     })
 
+    it('should apply rule to all matches merged if requested', async () => {
+        // Rule: if anything has an attribute, anything is attribute
+        const rule: ConceptGraph = ConceptGraph.fromModel({
+            "parts_rule": {
+                '-has_hypothesis->': {
+                    '?unknown_hyp_collection': {
+                        '-has_part->': {
+                            "?unknown_hyp_collection_part": {
+                                "<-has_hypothesis-": "parts_rule"
+                            }
+                        }
+                    }
+                },
+                '-has_conclusion->': {
+                    '?unknown_conc_collection_part': {
+                        '<-becomes-': '?unknown_hyp_collection_part',
+                        '-part_of->': {
+                            "?unknown_conc_collection": {
+                                '<-becomes-': '?unknown_hyp_collection',
+                                "<-has_conclusion-": "parts_rule"
+                            }
+                        }
+                    }
+                }
+
+            }
+        })
+        // Argument: sky has attribute blue
+        const args: ConceptGraph = ConceptGraph.fromModel({
+            'face': {
+                '-has_part->': {
+                    'left_eye': {},
+                    'right_eye': {},
+                    'nose': {},
+                    'mouth': {},
+                }
+            }
+        })
+
+        const result: ConceptGraph = await ruleService.applyRuleToAllMatches(rule, args)
+
+        expect(result.toModel('face')).toEqual({
+            'face': {
+                '<-part_of-': {
+                    'left_eye': {},
+                    'right_eye': {},
+                    'nose': {},
+                    'mouth': {},
+                }
+            }
+        })
+    })
+
+    it('should apply rule to first match only if requested', async () => {
+        // Rule: if anything has an attribute, anything is attribute
+        const rule: ConceptGraph = ConceptGraph.fromModel({
+            "parts_rule": {
+                '-has_hypothesis->': {
+                    '?unknown_hyp_collection': {
+                        '-has_part->': {
+                            "?unknown_hyp_collection_part": {
+                                "<-has_hypothesis-": "parts_rule"
+                            }
+                        }
+                    }
+                },
+                '-has_conclusion->': {
+                    '?unknown_conc_collection_part': {
+                        '<-becomes-': '?unknown_hyp_collection_part',
+                        '-part_of->': {
+                            "?unknown_conc_collection": {
+                                '<-becomes-': '?unknown_hyp_collection',
+                                "<-has_conclusion-": "parts_rule"
+                            }
+                        }
+                    }
+                }
+
+            }
+        })
+        // Argument: sky has attribute blue
+        const args: ConceptGraph = ConceptGraph.fromModel({
+            'face': {
+                '-has_part->': {
+                    'left_eye': {},
+                    'right_eye': {},
+                    'nose': {},
+                    'mouth': {},
+                }
+            }
+        })
+
+        const result: ConceptGraph = await ruleService.applyRuleGetFirstResult(rule, args)
+
+        expect(result.toModel('face')).toEqual({
+            'face': {
+                '<-part_of-': 'left_eye'
+            }
+        })
+    })
+
 })
