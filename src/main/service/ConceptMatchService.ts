@@ -19,6 +19,19 @@ interface MatchingOptions {
 }
 
 export class ConceptMatchService {
+    getAndMergeMatches (query: ConceptGraph, data: ConceptGraph): ConceptGraph {
+        const allMatches: ConceptGraph[] = this.getMatches(query, data)
+        const mergedCg: ConceptGraph = new ConceptGraph()
+
+        for (const singleMatch of allMatches) {
+            mergedCg.mergeFrom(singleMatch)
+        }
+        return mergedCg
+    }
+
+    getFirstMatch (query: ConceptGraph, data: ConceptGraph): ConceptGraph {
+        return this.getMatches(query, data)[0] ?? new ConceptGraph()
+    }
 
     getMatches (query: ConceptGraph, data: ConceptGraph, opts: MatchingOptions = { shouldIncludeQueryInResult: false }): ConceptGraph[] {
         glog().trace('\n|---------START MATCHING-------|')

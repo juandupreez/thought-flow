@@ -698,4 +698,38 @@ describe(ConceptMatchService, () => {
 
 
     })
+
+    describe('Get and Merge Matches', () => {
+
+        it('should get and merge all possible matches if requested', () => {
+            const data: ConceptGraph = ConceptGraph.fromModel({
+                'face': {
+                    '-has_part->': {
+                        'left_eye': {},
+                        'right_eye': {},
+                        'nose': {},
+                        'mouth': {},
+                    }
+                },
+            })
+            const query: ConceptGraph = ConceptGraph.fromModel({
+                'face': {
+                    '-has_part->': '?unknown_001'
+                },
+            })
+
+            const mergedMatch: ConceptGraph = matcher.getAndMergeMatches(query, data)
+
+            expect(mergedMatch.toModel()).toEqual({
+                'face': {
+                    '-has_part->': {
+                        'left_eye': {},
+                        'right_eye': {},
+                        'nose': {},
+                        'mouth': {},
+                    }
+                },
+            })
+        })
+    })
 })
