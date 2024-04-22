@@ -374,6 +374,17 @@ export class ConceptGraph extends Graph<Concept, Relation> {
     doesConceptIdExist (conceptId: string): boolean {
         return this.nodes().includes(conceptId)
     }
+    
+    replaceRelationTypes (existingRelationType: string, newRelationType: string) {
+        this.forEachEdge((relationId, relation) => {
+            if (relation.type === existingRelationType) {
+                this.replaceEdgeAttributes(relationId, {
+                    ...relation,
+                    type: newRelationType
+                })
+            }
+        })
+    }
 
     toString (): string {
         return this.toStringifiedModel()

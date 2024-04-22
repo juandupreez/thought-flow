@@ -38,7 +38,7 @@ describe('Basic Rules', () => {
         // Argument: sky is blue
         const args: ConceptGraph = ConceptGraph.fromModel({ 'sky': { '-attr->': 'light_blue' } })
 
-        const result: ConceptGraph = await ruleService.applyRuleGetFirstResult(rule, args)
+        const result: ConceptGraph = await ruleService.applyRuleToFirstMatch(rule, args)
 
         const expectedResultModel: ConceptGraphModel = { 'sky': { '-attr->': 'blue' } }
         expect(result.toModel('sky')).toEqual(expectedResultModel)
@@ -75,7 +75,7 @@ describe('Basic Rules', () => {
         // Argument: sky is blue
         const args: ConceptGraph = ConceptGraph.fromModel({ 'sky': { '-attr->': 'light_blue' } })
 
-        const result: ConceptGraph = await ruleService.applyRuleGetFirstResult(rule, args)
+        const result: ConceptGraph = await ruleService.applyRuleToFirstMatch(rule, args)
 
         const expectedResultModel: ConceptGraphModel = { 'sky': { '-attr->': 'blue' } }
         expect(result.toModel('sky')).toEqual(expectedResultModel)
@@ -112,7 +112,7 @@ describe('Basic Rules', () => {
         // Argument: sky is blue
         const args: ConceptGraph = ConceptGraph.fromModel({ 'sky': { '-attr->': 'blue' } })
 
-        const result: ConceptGraph = await ruleService.applyRuleGetFirstResult(rule, args)
+        const result: ConceptGraph = await ruleService.applyRuleToFirstMatch(rule, args)
 
         expect(result.toModel('cloud')).toEqual({ 'cloud': { '-attr->': 'blue' } })
 
@@ -149,7 +149,7 @@ describe('Basic Rules', () => {
         // Argument: sky has attribute blue
         const args: ConceptGraph = ConceptGraph.fromModel({ 'sky': { '-attr->': 'blue' } })
 
-        const result: ConceptGraph = await ruleService.applyRuleGetFirstResult(rule, args)
+        const result: ConceptGraph = await ruleService.applyRuleToFirstMatch(rule, args)
 
         const expectedResultModel: ConceptGraphModel = { 'sky': { '-is->': 'blue' } }
         expect(result.toModel('sky')).toEqual(expectedResultModel)
@@ -249,7 +249,7 @@ describe('Basic Rules', () => {
             }
         })
 
-        const result: ConceptGraph = await ruleService.applyRuleGetFirstResult(rule, args)
+        const result: ConceptGraph = await ruleService.applyRuleToFirstMatch(rule, args)
 
         expect(result.toModel('face')).toEqual({
             'face': {
