@@ -1,5 +1,5 @@
 import { ConceptGraph } from "../../../../../main/core/ConceptGraph"
-import { ConceptGraphDao } from "../../../../../main/dao/ConceptGraphDao"
+import { Neo4JConceptGraphDao } from "../../../../../main/dao/neo4j/Neo4JConceptGraphDao"
 import { Neo4JAdapter } from "../../../../../main/dao/neo4j/Neo4JAdapter"
 import { Reader } from "../../../../../main/service/Reader"
 import { connections } from "../../../../_testconf/connections"
@@ -10,12 +10,12 @@ describe(Reader, () => {
 
     const dbConnectKey: string = 'di-1.0'
     const neo4JAdapter: Neo4JAdapter = new Neo4JAdapter(connections[dbConnectKey])
-    let conceptGraphDao: ConceptGraphDao
+    let conceptGraphDao: Neo4JConceptGraphDao
     let reader: Reader
 
     beforeAll(async () => {
         await neo4JAdapter.connect()
-        conceptGraphDao = new ConceptGraphDao(neo4JAdapter)
+        conceptGraphDao = new Neo4JConceptGraphDao(neo4JAdapter)
         reader = new Reader(conceptGraphDao)
     })
 

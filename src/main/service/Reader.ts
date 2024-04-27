@@ -1,10 +1,10 @@
 import { ConceptGraph } from "../core/ConceptGraph"
-import { ConceptGraphDao } from "../dao/ConceptGraphDao"
+import { Neo4JConceptGraphDao } from "../dao/neo4j/Neo4JConceptGraphDao"
 
 export class Reader {
-    private readonly conceptGraphDao: ConceptGraphDao
+    private readonly conceptGraphDao: Neo4JConceptGraphDao
 
-    constructor (conceptGraphDao: ConceptGraphDao) {
+    constructor (conceptGraphDao: Neo4JConceptGraphDao) {
         this.conceptGraphDao = conceptGraphDao
     }
 

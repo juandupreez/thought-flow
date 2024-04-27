@@ -1,5 +1,5 @@
 import { ConceptGraphModel } from "../../../../../main/model/ConceptGraphModel"
-import { ConceptGraphDao } from "../../../../../main/dao/ConceptGraphDao"
+import { Neo4JConceptGraphDao } from "../../../../../main/dao/neo4j/Neo4JConceptGraphDao"
 import { Neo4JAdapter } from "../../../../../main/dao/neo4j/Neo4JAdapter"
 import { LogLevel, glog } from "../../../../../main/util/Logger"
 import { connections } from "../../../../_testconf/connections"
@@ -7,14 +7,14 @@ import { connections } from "../../../../_testconf/connections"
 global.console = require('console')
 glog().setLogLevel(LogLevel.DEBUG)
 
-describe(ConceptGraphDao, () => {
+describe(Neo4JConceptGraphDao, () => {
     const dbConnectKey: string = 'di-1.0'
     const neo4JAdapter: Neo4JAdapter = new Neo4JAdapter(connections[dbConnectKey])
-    let conceptGraphModelDao: ConceptGraphDao
+    let conceptGraphModelDao: Neo4JConceptGraphDao
 
     beforeAll(async () => {
         await neo4JAdapter.connect()
-        conceptGraphModelDao = new ConceptGraphDao(neo4JAdapter)
+        conceptGraphModelDao = new Neo4JConceptGraphDao(neo4JAdapter)
     })
 
     afterAll(async () => {
