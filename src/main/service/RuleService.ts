@@ -30,6 +30,8 @@ export class RuleService {
     glog().debug('Arguments', args.toStringifiedModel())
     const hypothesis: ConceptGraph = rule.getConceptDefinitionByRelationType('has_hypothesis')
     glog().debug('Hypothesis', hypothesis.toStringifiedModel())
+    const mappings: ConceptGraph = rule.getConceptDefinitionByRelationType('has_mapping')
+    glog().debug('Mappings', hypothesis.toStringifiedModel())
     const conclusion: ConceptGraph = rule.getConceptDefinitionByRelationType('has_conclusion')
     glog().debug('Conclusion', conclusion.toStringifiedModel())
     const possibleMatchesWithHypothesis: ConceptGraph[] = this.conceptMatchService.getMatches(hypothesis, args, { shouldIncludeQueryInResult: true })
@@ -46,7 +48,7 @@ export class RuleService {
     for (const possibleMatchWithHypothesis of possibleMatchesWithHypothesis) {
 
       const result: ConceptGraph = ConceptGraph.copyFrom(conclusion)
-      rule.forEachEdge((ruleRelationId: string, ruleRelation,
+      mappings.forEachEdge((ruleRelationId: string, ruleRelation,
         hypothesisConceptId, conclusionConceptId,
         hypothesisConcept, conclusionConcept
       ) => {

@@ -14,25 +14,23 @@ describe('Basic Rules', () => {
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "blue_rule": {
                 '-has_hypothesis->': {
+                    "light_blue": {},
                     '?unknown_001': {
-                        '-attr->': {
-                            "light_blue": {
-                                "<-has_hypothesis-": "blue_rule"
-                            }
-                        }
+                        '-attr->': "light_blue"
+                    }
+                },
+                '-has_mapping->': {
+                    'known_001': {},
+                    '?unknown_001': {
+                        '-becomes->': 'known_001'
                     }
                 },
                 '-has_conclusion->': {
-                    '?unknown_002': {
-                        '<-becomes-': '?unknown_001',
-                        '-attr->': {
-                            "blue": {
-                                "<-has_conclusion-": "blue_rule"
-                            }
-                        }
+                    "blue": {},
+                    'known_001': {
+                        '-attr->': "blue"
                     }
                 }
-
             }
         })
         // Argument: sky is blue
@@ -51,22 +49,21 @@ describe('Basic Rules', () => {
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "blue_rule": {
                 '-has_hypothesis->': {
+                    "light_blue": {},
                     '?unknown_001': {
-                        '-attr->': {
-                            "light_blue": {
-                                "<-has_hypothesis-": "blue_rule"
-                            }
-                        }
+                        '-attr->': "light_blue"
+                    }
+                },
+                '-has_mapping->': {
+                    'known_001': {},
+                    '?unknown_001': {
+                        '-becomes->': 'known_001'
                     }
                 },
                 '-has_conclusion->': {
-                    '?unknown_002': {
-                        '<-becomes-': '?unknown_001',
-                        '-attr->': {
-                            "blue": {
-                                "<-has_conclusion-": "blue_rule"
-                            }
-                        }
+                    "blue": {},
+                    'known_001': {
+                        '-attr->': "blue"
                     }
                 }
 
@@ -88,21 +85,22 @@ describe('Basic Rules', () => {
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "blue_rule": {
                 '-has_hypothesis->': {
+                    '?attribute_001': {},
                     'sky': {
-                        '-attr->': {
-                            "?attribute_001": {
-                                "<-has_hypothesis-": "blue_rule"
-                            }
-                        }
+                        '-attr->': "?attribute_001"
+                    }
+                },
+                '-has_mapping->': {
+                    'attribute_002': {},
+                    '?attribute_001': {
+                        '-becomes->': 'attribute_002'
                     }
                 },
                 '-has_conclusion->': {
+                    "?attribute_002": {},
                     'cloud': {
                         '-attr->': {
-                            "?attribute_002": {
-                                '<-becomes-': '?attribute_001',
-                                "<-has_conclusion-": "blue_rule"
-                            }
+                            "?attribute_002": {}
                         }
                     }
                 }
@@ -124,23 +122,25 @@ describe('Basic Rules', () => {
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "blue_rule": {
                 '-has_hypothesis->': {
+                    "?unknown_attribute_001": {},
                     '?unknown_001': {
-                        '-attr->': {
-                            "?attribute_001": {
-                                "<-has_hypothesis-": "blue_rule"
-                            }
-                        }
+                        '-attr->': "?unknown_attribute_001"
+                    }
+                },
+                '-has_mapping->': {
+                    'known_001': {},
+                    '?unknown_001': {
+                        "-becomes->": 'known_001'
+                    },
+                    'known_attribute_001': {},
+                    '?unknown_attribute_001': {
+                        "-becomes->": 'known_attribute_001'
                     }
                 },
                 '-has_conclusion->': {
-                    '?unknown_002': {
-                        '<-becomes-': '?unknown_001',
-                        '-is->': {
-                            "?attribute_002": {
-                                '<-becomes-': '?attribute_001',
-                                "<-has_conclusion-": "blue_rule"
-                            }
-                        }
+                    "known_attribute_001": {},
+                    'known_001': {
+                        '-is->': "known_attribute_001"
                     }
                 }
 
@@ -162,23 +162,25 @@ describe('Basic Rules', () => {
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "parts_rule": {
                 '-has_hypothesis->': {
-                    '?unknown_hyp_collection': {
-                        '-has_part->': {
-                            "?unknown_hyp_collection_part": {
-                                "<-has_hypothesis-": "parts_rule"
-                            }
-                        }
+                    "?unknown_collection_part": {},
+                    '?unknown_collection': {
+                        '-has_part->': "?unknown_collection_part"
+                    }
+                },
+                '-has_mapping->': {
+                    'known_collection': {},
+                    '?unknown_collection': {
+                        '-becomes->': 'known_collection'
+                    },
+                    'known_collection_part': {},
+                    '?unknown_collection_part': {
+                        '-becomes->': 'known_collection_part'
                     }
                 },
                 '-has_conclusion->': {
-                    '?unknown_conc_collection_part': {
-                        '<-becomes-': '?unknown_hyp_collection_part',
-                        '-part_of->': {
-                            "?unknown_conc_collection": {
-                                '<-becomes-': '?unknown_hyp_collection',
-                                "<-has_conclusion-": "parts_rule"
-                            }
-                        }
+                    "known_collection": {},
+                    'known_collection_part': {
+                        '-part_of->': 'known_collection'
                     }
                 }
 
@@ -212,26 +214,29 @@ describe('Basic Rules', () => {
 
     it('should apply rule to first match only if requested', async () => {
         // Rule: if anything has an attribute, anything is attribute
+
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "parts_rule": {
                 '-has_hypothesis->': {
-                    '?unknown_hyp_collection': {
-                        '-has_part->': {
-                            "?unknown_hyp_collection_part": {
-                                "<-has_hypothesis-": "parts_rule"
-                            }
-                        }
+                    "?unknown_collection_part": {},
+                    '?unknown_collection': {
+                        '-has_part->': "?unknown_collection_part"
+                    }
+                },
+                '-has_mapping->': {
+                    'known_collection': {},
+                    '?unknown_collection': {
+                        '-becomes->': 'known_collection'
+                    },
+                    'known_collection_part': {},
+                    '?unknown_collection_part': {
+                        '-becomes->': 'known_collection_part'
                     }
                 },
                 '-has_conclusion->': {
-                    '?unknown_conc_collection_part': {
-                        '<-becomes-': '?unknown_hyp_collection_part',
-                        '-part_of->': {
-                            "?unknown_conc_collection": {
-                                '<-becomes-': '?unknown_hyp_collection',
-                                "<-has_conclusion-": "parts_rule"
-                            }
-                        }
+                    "known_collection": {},
+                    'known_collection_part': {
+                        '-part_of->': 'known_collection'
                     }
                 }
 
