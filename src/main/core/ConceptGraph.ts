@@ -177,12 +177,12 @@ export class ConceptGraph extends Graph<Concept, Relation> {
             }
         }
      */
-    getConceptDefinitionByRelationType (relationType: string): ConceptGraph {
+    getConceptDefinitionByRelationType (fromConceptId: string, relationType: string): ConceptGraph {
         const matchedConceptGraph: ConceptGraph = new ConceptGraph()
         const conceptIds: string[] = []
         // add all concepts which are targets of relation type: x-relationType->targetConcept
         this.forEachEdge((edgeId: string, relation: Relation, sourceConceptId, targetConceptId, sourceConcept, targetConcept) => {
-            if (relation.type === relationType) {
+            if (sourceConceptId === fromConceptId && relation.type === relationType) {
                 matchedConceptGraph.addConceptByIdIfNotExists(targetConceptId, targetConcept)
                 conceptIds.push(targetConceptId)
             }

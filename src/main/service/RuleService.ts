@@ -10,11 +10,11 @@ export class RuleService {
 
   private readonly conceptMatchService: ConceptMatchService = new ConceptMatchService()
 
-  async applyRuleToFirstMatch (rule: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph> {
+  async applyRuleToFirstMatch(rule: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph> {
     return (await this.applyRule(rule, args))[0] ?? new ConceptGraph()
   }
 
-  async applyRuleToAllMatches (rule: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph> {
+  async applyRuleToAllMatches(rule: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph> {
     const allResults: ConceptGraph[] = await this.applyRule(rule, args)
     const mergedResult: ConceptGraph = new ConceptGraph()
 
@@ -25,14 +25,15 @@ export class RuleService {
     return mergedResult
   }
 
-  async applyRule (rule: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph[]> {
+  async applyRule(rule: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph[]> {
     glog().debug('\n|---------START APPLYING RULE-------|')
     glog().debug('Arguments', args.toStringifiedModel())
-    const hypothesis: ConceptGraph = rule.getConceptDefinitionByRelationType('has_hypothesis')
+    const rootRuleConceptId: string = this.getRootRuleConceptId(rule)
+    const hypothesis: ConceptGraph = rule.getConceptDefinitionByRelationType(rootRuleConceptId, 'has_hypothesis')
     glog().debug('Hypothesis', hypothesis.toStringifiedModel())
-    const mappings: ConceptGraph = rule.getConceptDefinitionByRelationType('has_mapping')
+    const mappings: ConceptGraph = rule.getConceptDefinitionByRelationType(rootRuleConceptId, 'has_mapping')
     glog().debug('Mappings', hypothesis.toStringifiedModel())
-    const conclusion: ConceptGraph = rule.getConceptDefinitionByRelationType('has_conclusion')
+    const conclusion: ConceptGraph = rule.getConceptDefinitionByRelationType(rootRuleConceptId, 'has_conclusion')
     glog().debug('Conclusion', conclusion.toStringifiedModel())
     const possibleMatchesWithHypothesis: ConceptGraph[] = this.conceptMatchService.getMatches(hypothesis, args, { shouldIncludeQueryInResult: true })
     if (possibleMatchesWithHypothesis.length === 0) {
@@ -82,6 +83,25 @@ export class RuleService {
     }), null, 2))
     glog().debug('\n|---------END APPLYING RULE-------|')
     return results
+  }
+
+  getRootRuleConceptId(rule: ConceptGraph): string {
+    const ruleStructure: ConceptGraph = ConceptGraph.fromModel({
+      '?unkown_rule_name': {
+        '-has_hypothesis->': '?unknown_hypothesis',
+        '-has_mapping->': '?unknown_mapping',
+        '-has_conclusion->': '?unknown_conclusion'
+      }
+    })
+    const potentialRules: ConceptGraph[] = this.conceptMatchService.getMatches(ruleStructure, rule)
+    if (potentialRules.length == 0) {
+      return 'no_rule_in_concept_graph'
+    }
+    else if (potentialRules.length == 1) {
+      return Object.keys(potentialRules[0].toModel())[0]
+    } else {
+      return Object.keys(potentialRules[0].toModel())[0]
+    }
   }
 
   // async applyHypothesisAndConclusionToAllData (hypothesis: ConceptGraph, conclusion: ConceptGraph, args: ConceptGraph): Promise<ConceptGraph> {

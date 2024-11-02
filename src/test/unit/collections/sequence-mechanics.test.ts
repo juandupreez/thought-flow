@@ -45,76 +45,55 @@ describe('Sequence Mechanics', () => {
                 }
             }
         })
-        // const getFirstItemInSequenceRule: ConceptGraph = ConceptGraph.fromModel({
-        //     'get_first_sequence_item_rule': {
-        //         '-has_hypothesis->': {
-        //             '?unknown_hyp_collection': {
-        //                 '-first->': '?unknown_hyp_first_item'
-        //             },
-        //             '?unknown_hyp_first_item': {}
-        //         },
-        //         '-has_conclusion->': {
-        //             'known_conc_first_item': {
-        //                 '<-becomes-': '?unknown_hyp_first_item',
-        //                 '-next->': '?unknown_conc_second_item'
-        //             },
-        //             '?unknown_conc_second_item': {}
-        //         }
-        //     }
-        // })
-        // const getNextItemInSequenceRule: ConceptGraph = ConceptGraph.fromModel({
-        //     'get_next_sequence_item_rule': {
-        //         '-has_hypothesis->': {
-        //             '?unknown_hyp_cur_item': {
-        //                 '-next->': '?unknown_hyp_next_item'
-        //             },
-        //             '?unknown_hyp_next_item': {}
-        //         },
-        //         '-has_conclusion->': {
-        //             'known_conc_next_item': {
-        //                 '<-becomes-': '?unknown_hyp_next_item',
-        //                 '-next->': '?unknown_conc_next_next_item'
-        //             },
-        //             '?unknown_conc_next_next_item': {}
-        //         }
-        //     }
-        // })
         const getFirstItemInSequenceRule: ConceptGraph = ConceptGraph.fromModel({
             'get_first_sequence_item_rule': {
                 '-has_hypothesis->': {
-                    '?unknown_hyp_collection': {
-                        '-first->': '?unknown_hyp_first_item'
-                    },
-                    '?unknown_hyp_first_item': {}
+                    '?unknown_first_item': {},
+                    '?unknown_collection': {
+                        '-first->': '?unknown_first_item'
+                    }
+                },
+                '-has_mapping->': {
+                    'known_first_item': {},
+                    '?unknown_first_item': {
+                        '-becomes->': 'known_first_item'
+                    }
                 },
                 '-has_conclusion->': {
-                    'known_conc_first_item': {
-                        '<-becomes-': '?unknown_hyp_first_item'
-                    }
+                    'known_first_item': {}
                 }
             }
         })
         const getNextItemInSequenceRule: ConceptGraph = ConceptGraph.fromModel({
             'create_next_sequence_item_rule': {
                 '-has_hypothesis->': {
-                    '?unknown_hyp_item_in_sequence': {}
+                    '?unknown_sequence_item': {}
+                },
+                '-has_mapping->': {
+                    'known_sequence_item': {},
+                    '?unknown_sequence_item': {
+                        '-becomes->': 'known_sequence_item'
+                    }
                 },
                 '-has_conclusion->': {
-                    '?unknown_hyp_item_in_sequence': { '-becomes->': 'known_conc_item_in_sequence' },
-                    'known_conc_item_in_sequence': {},
-                    '?unknown_hyp_next_item': {},
-                    'known_conc_next_item': {},
+                    'known_sequence_item': {},
+                    '?unknown_next_item': {},
+                    'known_next_item': {},
                     'get_next_sequence_item_rule': {
-                        '-has_hypothesis_1->': {
-                            'known_conc_item_in_sequence': {
-                                '-next->': '?unknown_hyp_next_item'
-                            },
-                            '?unknown_hyp_next_item': {}
-                        },
-                        '-has_conclusion_1->': {
-                            'known_conc_next_item': {
-                                '<-becomes_1-': '?unknown_hyp_next_item'
+                        '-has_hypothesis->': {
+                            '?unknown_next_item': {},
+                            'known_sequence_item': {
+                                '-next->': '?unknown_next_item'
                             }
+                        },
+                        '-has_mapping->': {
+                            'known_next_item': {},
+                            '?unknown_next_item': {
+                                '-becomes->': 'known_next_item'
+                            }
+                        },
+                        '-has_conclusion->': {
+                            'known_next_item': {}
                         }
                     }
                 }
@@ -122,33 +101,29 @@ describe('Sequence Mechanics', () => {
         })
 
         const firstItem: ConceptGraph = await ruleService.applyRuleToFirstMatch(getFirstItemInSequenceRule, data)
-        glog().info('First Item', firstItem.toStringifiedModel())
+        // glog().info('First Item', firstItem.toStringifiedModel())
+        expect(firstItem.toModel()).toEqual({
+            "s_in_sky": {}
+        })
 
         const createdNextItemRule1: ConceptGraph = await ruleService.applyRuleToFirstMatch(getNextItemInSequenceRule, firstItem)
-        createdNextItemRule1.replaceRelationTypes('has_hypothesis_1', 'has_hypothesis')
-        createdNextItemRule1.replaceRelationTypes('has_conclusion_1', 'has_conclusion')
-        createdNextItemRule1.replaceRelationTypes('becomes_1', 'becomes')
         const secondItem: ConceptGraph = await ruleService.applyRuleToFirstMatch(createdNextItemRule1, data)
-        glog().info('Second Item', secondItem.toStringifiedModel())
+        // glog().info('Second Item', secondItem.toStringifiedModel())
+        expect(secondItem.toModel()).toEqual({
+            "k_in_sky": {}
+        })
 
         const createdNextItemRule2: ConceptGraph = await ruleService.applyRuleToFirstMatch(getNextItemInSequenceRule, secondItem)
-        createdNextItemRule2.replaceRelationTypes('has_hypothesis_1', 'has_hypothesis')
-        createdNextItemRule2.replaceRelationTypes('has_conclusion_1', 'has_conclusion')
-        createdNextItemRule2.replaceRelationTypes('becomes_1', 'becomes')
         const thirdItem: ConceptGraph = await ruleService.applyRuleToFirstMatch(createdNextItemRule2, data)
-        glog().info('Third Item', thirdItem.toStringifiedModel())
+        // glog().info('Third Item', thirdItem.toStringifiedModel())
+        expect(thirdItem.toModel()).toEqual({
+            "y_in_sky": {}
+        })
 
         const createdNextItemRule3: ConceptGraph = await ruleService.applyRuleToFirstMatch(getNextItemInSequenceRule, thirdItem)
-        createdNextItemRule3.replaceRelationTypes('has_hypothesis_1', 'has_hypothesis')
-        createdNextItemRule3.replaceRelationTypes('has_conclusion_1', 'has_conclusion')
-        createdNextItemRule3.replaceRelationTypes('becomes_1', 'becomes')
         const fourthItem: ConceptGraph = await ruleService.applyRuleToFirstMatch(createdNextItemRule3, data)
-        glog().info('Fourth Item', fourthItem.toStringifiedModel())
-
-
-        // const fourthItem: ConceptGraph = await ruleService.applyRuleGetFirstResult(getNextItemInSequenceRule, thirdItem)
-        // glog().info('Fourth Item',fourthItem.toStringifiedModel())
-
+        // glog().info('Fourth Item', fourthItem.toStringifiedModel())
+        expect(fourthItem.toModel()).toEqual({})
 
     })
 
