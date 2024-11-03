@@ -6,32 +6,46 @@ import { ConceptGraphModel } from "../model/ConceptGraphModel"
 import { isConceptUnknown, parseConceptIdAndIsUnknown } from "../util/common"
 
 export class ConceptGraph extends Graph<Concept, Relation> {
+    getConcepts(): Concept[] {
+        const concepts: Concept[] = []
+        this.forEachNode((conceptId: string, concept: Concept) => {
+            concepts.push(concept)
+        })
+        return concepts
+    }
+    getConceptIds(): string[] {
+        const conceptIds: string[] = []
+        this.forEachNode((conceptId: string, concept: Concept) => {
+            conceptIds.push(conceptId)
+        })
+        return conceptIds
+    }
 
     private readonly idGen: IdGenerator = new IdGenerator()
 
-    constructor () {
+    constructor() {
         super({
             multi: true
         })
     }
 
-    addConcept (concept: Concept) {
+    addConcept(concept: Concept) {
         const conceptId: string = this.idGen.getNextUniqueId()
         this.addNode(conceptId, concept)
     }
 
-    addConceptById (conceptId: string, concept: Concept) {
+    addConceptById(conceptId: string, concept: Concept) {
         this.addNode(conceptId, concept)
     }
 
-    addConceptByIdIfNotExists (conceptId: string, concept: Concept) {
+    addConceptByIdIfNotExists(conceptId: string, concept: Concept) {
         const existingConceptId: string | undefined = this.findNode(((possibleExistingConceptId) => { return possibleExistingConceptId === conceptId }))
         if (existingConceptId === undefined) {
             this.addConceptById(conceptId, concept)
         }
     }
 
-    addRelationByTypeIfNotExists (relationType: string, sourceConceptId: string, targetConceptId: string) {
+    addRelationByTypeIfNotExists(relationType: string, sourceConceptId: string, targetConceptId: string) {
         const relationKey: string = `${sourceConceptId}-${relationType}->${targetConceptId}`
         const existingRelationId: string | undefined = this.findEdge(((possibleExistingRelationId) => { return possibleExistingRelationId === relationKey }))
         if (existingRelationId === undefined) {
@@ -41,12 +55,12 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         }
     }
 
-    static copyFrom (graphToCopy: ConceptGraph): ConceptGraph {
+    static copyFrom(graphToCopy: ConceptGraph): ConceptGraph {
         const copiedGraph: ConceptGraph = new ConceptGraph()
         return copiedGraph.mergeFrom(graphToCopy)
     }
 
-    mergeFrom (graphToMerge: ConceptGraph): ConceptGraph {
+    mergeFrom(graphToMerge: ConceptGraph): ConceptGraph {
         graphToMerge.forEachNode((ConceptId: string, nodeAttributes: Concept) => {
             const existingConceptId: string | undefined = this.findNode(((possibleExistingConceptId) => { return possibleExistingConceptId === ConceptId }))
             if (existingConceptId === undefined) {
@@ -66,7 +80,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         return this
     }
 
-    static fromModel (conceptModel: ConceptGraphModel): ConceptGraph {
+    static fromModel(conceptModel: ConceptGraphModel): ConceptGraph {
         const conceptGraph: ConceptGraph = new ConceptGraph()
 
         this._fillNodesRecursively(conceptModel, conceptGraph)
@@ -76,7 +90,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         return conceptGraph
     }
 
-    private static _fillNodesRecursively (conceptModel: ConceptGraphModel, conceptGraph: ConceptGraph) {
+    private static _fillNodesRecursively(conceptModel: ConceptGraphModel, conceptGraph: ConceptGraph) {
         for (const conceptIdAndRefIdStr in conceptModel) {
             const { conceptId, isUnknown } = parseConceptIdAndIsUnknown(conceptIdAndRefIdStr)
             if (Object.prototype.hasOwnProperty.call(conceptModel, conceptIdAndRefIdStr)) {
@@ -106,7 +120,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         }
     }
 
-    private static _fillEdgesRecursively (conceptModel: ConceptGraphModel, conceptGraph: ConceptGraph) {
+    private static _fillEdgesRecursively(conceptModel: ConceptGraphModel, conceptGraph: ConceptGraph) {
         for (const conceptIdAndRefIdStr in conceptModel) {
             const { conceptId, isUnknown } = parseConceptIdAndIsUnknown(conceptIdAndRefIdStr)
             if (Object.prototype.hasOwnProperty.call(conceptModel, conceptIdAndRefIdStr)) {
@@ -177,7 +191,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
             }
         }
      */
-    getConceptDefinitionByRelationType (fromConceptId: string, relationType: string, shouldIncludeOriginalConcept: boolean = false): ConceptGraph {
+    getConceptDefinitionByRelationType(fromConceptId: string, relationType: string, shouldIncludeOriginalConcept: boolean = false): ConceptGraph {
         const matchedConceptGraph: ConceptGraph = new ConceptGraph()
         const conceptIds: string[] = []
 
@@ -204,14 +218,14 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         return matchedConceptGraph
     }
 
-    isEmpty (): boolean {
+    isEmpty(): boolean {
         return (this.nodes().length === 0)
     }
 
-    toStringifiedModel (leadingConceptId?: string): string {
+    toStringifiedModel(leadingConceptId?: string): string {
         return JSON.stringify(this.toModel(leadingConceptId), null, 2)
     }
-    toModel (leadingConceptId?: string): ConceptGraphModel {
+    toModel(leadingConceptId?: string): ConceptGraphModel {
         if (this.isEmpty()) {
             return {}
         } else {
@@ -233,7 +247,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         }
     }
 
-    private _recursivelyBuildConceptGraphModel (curConceptId: string, alreadyProcessedConceptIds: string[] = [], alreadyProcessedRelationIds: string[] = []): ConceptGraphModel {
+    private _recursivelyBuildConceptGraphModel(curConceptId: string, alreadyProcessedConceptIds: string[] = [], alreadyProcessedRelationIds: string[] = []): ConceptGraphModel {
         if (alreadyProcessedConceptIds.includes(curConceptId)) {
             // const model: ConceptGraphModel = {}
             // model[conceptId] = {}
@@ -287,7 +301,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         return conceptModel
     }
 
-    replaceConcept (existingConceptId: string, newConceptId: string, newConcept: Concept) {
+    replaceConcept(existingConceptId: string, newConceptId: string, newConcept: Concept) {
 
         this.addConceptByIdIfNotExists(newConceptId, newConcept)
 
@@ -303,7 +317,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
 
     }
 
-    forceDeleteConceptAndRelations (conceptId: string) {
+    forceDeleteConceptAndRelations(conceptId: string) {
         if (this.doesConceptIdExist(conceptId)) {
             const relationIdsToDelete: string[] = this.getRelationIdsForConcept(conceptId)
             for (const relationIdToDelete of relationIdsToDelete) {
@@ -316,11 +330,11 @@ export class ConceptGraph extends Graph<Concept, Relation> {
 
     }
 
-    getRelationIdsForConcept (conceptId: string): string[] {
+    getRelationIdsForConcept(conceptId: string): string[] {
         return this.filterEdges(conceptId, () => { return true })
     }
 
-    isUnknownConcept (conceptId: string): boolean {
+    isUnknownConcept(conceptId: string): boolean {
         const doesExist: boolean = this.nodes().includes(conceptId)
         if (doesExist) {
             return isConceptUnknown(this.getNodeAttributes(conceptId))
@@ -329,7 +343,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         }
     }
 
-    forEachRelationAndNeighbour (queryConceptId: string, cb: (relationId: string, relation: Relation, neighbourConceptId: string, neighbourConcept: Concept) => void) {
+    forEachRelationAndNeighbour(queryConceptId: string, cb: (relationId: string, relation: Relation, neighbourConceptId: string, neighbourConcept: Concept) => void) {
         this.forEachEdge((edgeId: string, edgeAttributes: Relation, sourceId: string, targetId: string, source: Concept, target: Concept) => {
             if (queryConceptId === sourceId) {
                 cb(edgeId, edgeAttributes, targetId, target)
@@ -339,7 +353,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         })
     }
 
-    findRelation (relationQuery: { conceptId?: string; neighbourConceptId?: string; type?: string }): string | undefined {
+    findRelation(relationQuery: { conceptId?: string; neighbourConceptId?: string; type?: string }): string | undefined {
         return this.findEdge((relationId, relation, sourceConceptId, targetConceptId) => {
             return (
                 (
@@ -357,7 +371,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         })
     }
 
-    filterRelationIds (relationQuery: { conceptId?: string; neighbourConceptId?: string; type?: string }): string[] {
+    filterRelationIds(relationQuery: { conceptId?: string; neighbourConceptId?: string; type?: string }): string[] {
         return this.filterEdges((relationId, relation, sourceConceptId, targetConceptId) => {
             return (
                 (
@@ -375,11 +389,11 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         })
     }
 
-    doesConceptIdExist (conceptId: string): boolean {
+    doesConceptIdExist(conceptId: string): boolean {
         return this.nodes().includes(conceptId)
     }
-    
-    replaceRelationTypes (existingRelationType: string, newRelationType: string) {
+
+    replaceRelationTypes(existingRelationType: string, newRelationType: string) {
         this.forEachEdge((relationId, relation) => {
             if (relation.type === existingRelationType) {
                 this.replaceEdgeAttributes(relationId, {
@@ -390,7 +404,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         })
     }
 
-    toString (): string {
+    toString(): string {
         return this.toStringifiedModel()
     }
 }

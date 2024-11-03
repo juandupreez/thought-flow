@@ -121,9 +121,7 @@ describe(ControlUnit, () => {
             }
         })
 
-        const conclusion: ConceptGraph = await controlUnit.run(printLettersInWordSkyProcedure)
-
-        glog().info(conclusion.toStringifiedModel())
+        await controlUnit.run(printLettersInWordSkyProcedure)
     })
 
 })

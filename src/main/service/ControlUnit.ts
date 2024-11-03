@@ -1,6 +1,8 @@
 import { ConceptGraph } from "../core/ConceptGraph"
 import { ConceptGraphDao } from "../dao/ConceptGraphDao"
 import { InMemoryConceptGraphDao } from "../dao/in-memory/InMemoryConceptGraphDao"
+import { Concept } from "../model/Concept"
+import { ConceptGraphModel } from "../model/ConceptGraphModel"
 import { Operation } from "../operations/Operation"
 import { HaltOp } from "../operations/impl/HaltOp"
 import { NoOp } from "../operations/impl/NoOp"
@@ -17,23 +19,24 @@ export class ControlUnit {
         this.conceptGraphDao = conceptGraphDao
     }
 
-    async run(procedure: ConceptGraph): Promise<ConceptGraph> {
+    async run(procedure: ConceptGraph): Promise<void> {
         const workingMemory: ConceptGraph = new ConceptGraph()
         const maxIterations: number = 10
         let i = 0
 
-        let curOperationCg: ConceptGraph | null = null
-        // let decodedOperation: Operation | null = null
+        let curOperationConceptId: string | null = null
+        let decodedOperation: Operation | null = null
         // let runningResult: ConceptGraph | null = null
+        let haltDetected: boolean = false
 
-        while (true) {
+        while (!haltDetected) {
             if (i >= maxIterations) {
                 throw new Error('Max iterations reached: ' + maxIterations)
             }
 
-            curOperationCg = await this._fetchNextOperation(curOperationCg, procedure, workingMemory)
-            glog().info(curOperationCg.toStringifiedModel())
-            // decodedOperation = await this._decode(curOperation)
+            curOperationConceptId = await this._fetchNextOperation(curOperationConceptId, procedure, workingMemory)
+            glog().info(curOperationConceptId)
+            decodedOperation = await this._decodeOperation(curOperationConceptId, procedure)
             // runningResult = await this._execute(decodedOperation, runningResult)
 
             // if (runningResult.isEmpty()) {
@@ -45,31 +48,43 @@ export class ControlUnit {
 
     }
 
-    private async _fetchNextOperation(curOperationCg: ConceptGraph | null, procedure: ConceptGraph, workingMemory: ConceptGraph): Promise<ConceptGraph> {
+    private async _fetchNextOperation(curOperationConceptId: string | null, procedure: ConceptGraph, workingMemory: ConceptGraph): Promise<string> {
 
-        if (curOperationCg == null) {
+        const conceptIds: string[] = []
+
+        if (curOperationConceptId == null) {
             const firstItemRule: ConceptGraph = await this.conceptGraphDao.getRuleByName('rule_get_first_sequence_item')
             glog().debug('---First Item Rule')
             glog().debug(firstItemRule.toStringifiedModel())
             const firstOp: ConceptGraph = await this.ruleService.applyRuleToFirstMatch(firstItemRule, procedure)
             glog().debug('---Op')
             glog().debug(firstOp.toStringifiedModel())
-            return firstOp
+            conceptIds.push(...firstOp.getConceptIds())
         } else {
             const nextItemTemplateRule: ConceptGraph = await this.conceptGraphDao.getRuleByName('template_rule_create_next_sequence_item_rule')
             glog().debug('---Next Item Template Rule')
             glog().debug(nextItemTemplateRule.toStringifiedModel())
-            const nextItemRule: ConceptGraph = await this.ruleService.applyRuleToFirstMatch(nextItemTemplateRule, curOperationCg)
+            const curOpCgModel: ConceptGraphModel = {}
+            curOpCgModel[curOperationConceptId] = {}
+            const nextItemRule: ConceptGraph = await this.ruleService.applyRuleToFirstMatch(nextItemTemplateRule, ConceptGraph.fromModel(curOpCgModel))
             glog().debug('---Next Item Template Rule')
             glog().debug(nextItemRule.toStringifiedModel())
             const nextOp: ConceptGraph = await this.ruleService.applyRuleToFirstMatch(nextItemRule, procedure)
             glog().debug('---Op')
             glog().debug(nextOp.toStringifiedModel())
-            return nextOp
+            conceptIds.push(...nextOp.getConceptIds())
+        } 
+        if (conceptIds.length == 0) {
+            throw new Error('Could not find first operation in procedure')
+        } else if (conceptIds.length == 1) {
+            return conceptIds[0]
+        } else {
+            throw new Error('Rule contains too many concept IDs: ' + JSON.stringify(conceptIds))
         }
     }
 
-    private async _decode(op: ConceptGraph): Promise<Operation> {
+    private async _decodeOperation(opConceptId: string, procedure: ConceptGraph): Promise<Operation> {
+        
         return new HaltOp()
     }
 
