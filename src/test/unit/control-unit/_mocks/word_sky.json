@@ -1,0 +1,31 @@
+{
+    "word_sky": {
+        "-has_part->": {
+            "s_in_sky": {
+                "<-first-": "word_sky",
+                "-instance_of->": {
+                    "letter_s": {
+                        "-is_a->": "letter"
+                    }
+                },
+                "-next->": "k_in_sky"
+            },
+            "k_in_sky": {
+                "-instance_of->": {
+                    "letter_k": {
+                        "-is_a->": "letter"
+                    }
+                },
+                "-next->": "y_in_sky"
+            },
+            "y_in_sky": {
+                "-instance_of->": {
+                    "letter_y": {
+                        "-is_a->": "letter"
+                    }
+                },
+                "<-last-": "word_sky"
+            }
+        }
+    }
+}

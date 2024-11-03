@@ -177,14 +177,19 @@ export class ConceptGraph extends Graph<Concept, Relation> {
             }
         }
      */
-    getConceptDefinitionByRelationType (fromConceptId: string, relationType: string): ConceptGraph {
+    getConceptDefinitionByRelationType (fromConceptId: string, relationType: string, shouldIncludeOriginalConcept: boolean = false): ConceptGraph {
         const matchedConceptGraph: ConceptGraph = new ConceptGraph()
         const conceptIds: string[] = []
+
         // add all concepts which are targets of relation type: x-relationType->targetConcept
         this.forEachEdge((edgeId: string, relation: Relation, sourceConceptId, targetConceptId, sourceConcept, targetConcept) => {
             if (sourceConceptId === fromConceptId && relation.type === relationType) {
                 matchedConceptGraph.addConceptByIdIfNotExists(targetConceptId, targetConcept)
                 conceptIds.push(targetConceptId)
+                if (shouldIncludeOriginalConcept) {
+                    matchedConceptGraph.addConceptByIdIfNotExists(sourceConceptId, sourceConcept)
+                    matchedConceptGraph.addEdgeWithKey(edgeId, sourceConceptId, targetConceptId, relation)
+                }
             }
         })
         this.forEachEdge((edgeId: string, relation: Relation, sourceConceptId, targetConceptId, sourceConcept, targetConcept) => {
@@ -206,7 +211,6 @@ export class ConceptGraph extends Graph<Concept, Relation> {
     toStringifiedModel (leadingConceptId?: string): string {
         return JSON.stringify(this.toModel(leadingConceptId), null, 2)
     }
-
     toModel (leadingConceptId?: string): ConceptGraphModel {
         if (this.isEmpty()) {
             return {}

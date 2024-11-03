@@ -1,0 +1,37 @@
+{
+    "template_rule_create_next_sequence_item_rule": {
+        "-instance_of->": "template_rule",
+        "-has_hypothesis->": {
+            "?unknown_item_in_sequence": {}
+        },
+        "-has_mapping->": {
+            "known_item_in_sequence": {},
+            "?unknown_item_in_sequence": {
+                "-becomes->": "known_item_in_sequence"
+            }
+        },
+        "-has_conclusion->": {
+            "known_item_in_sequence": {},
+            "?unknown_next_item": {},
+            "known_next_item": {},
+
+            "get_next_sequence_item_rule": {
+                "-has_hypothesis->": {
+                    "?unknown_next_item": {},
+                    "known_item_in_sequence": {
+                        "-next->": "?unknown_next_item"
+                    }
+                },
+                "-has_mapping->": {
+                    "known_next_item": {},
+                    "?unknown_next_item": {
+                        "-becomes->": "known_next_item"
+                    }
+                },
+                "-has_conclusion->": {
+                    "known_next_item": {}
+                }
+            }
+        }
+    }
+}

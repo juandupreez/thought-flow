@@ -3,12 +3,8 @@ import { Neo4JAdapter } from "./Neo4JAdapter"
 import { glog } from "../../util/Logger"
 import { ConceptGraphModel } from "../../model/ConceptGraphModel"
 import { ConceptGraph } from "../../core/ConceptGraph"
+import { SimpleRelation } from "../ConceptGraphDao"
 
-interface SimpleRelation {
-    fromConceptId: string
-    toConceptId: string
-    relationType: string
-}
 
 export class Neo4JConceptGraphDao {
     private readonly neo4JAdapter: Neo4JAdapter
