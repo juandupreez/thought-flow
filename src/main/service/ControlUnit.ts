@@ -4,8 +4,12 @@ import { InMemoryConceptGraphDao } from "../dao/in-memory/InMemoryConceptGraphDa
 import { Concept } from "../model/Concept"
 import { ConceptGraphModel } from "../model/ConceptGraphModel"
 import { Operation } from "../operations/Operation"
+import { ApplyRuleOp } from "../operations/impl/ApplyRuleOp"
+import { ErrorOp } from "../operations/impl/ErrorOp"
+import { FetchOp } from "../operations/impl/FetchOp"
 import { HaltOp } from "../operations/impl/HaltOp"
 import { NoOp } from "../operations/impl/NoOp"
+import { PrintConceptsOp } from "../operations/impl/PrintConceptsOp"
 import { glog } from "../util/Logger"
 import { ConceptMatchService } from "./ConceptMatchService"
 import { RuleService } from "./RuleService"
@@ -26,7 +30,6 @@ export class ControlUnit {
 
         let curOperationConceptId: string | null = null
         let decodedOperation: Operation | null = null
-        // let runningResult: ConceptGraph | null = null
         let haltDetected: boolean = false
 
         while (!haltDetected) {
@@ -37,11 +40,13 @@ export class ControlUnit {
             curOperationConceptId = await this._fetchNextOperation(curOperationConceptId, procedure, workingMemory)
             glog().info(curOperationConceptId)
             decodedOperation = await this._decodeOperation(curOperationConceptId, procedure)
-            // runningResult = await this._execute(decodedOperation, runningResult)
-
-            // if (runningResult.isEmpty()) {
-            //     return runningResult
-            // }
+            if (decodedOperation instanceof HaltOp) {
+                haltDetected = true
+            }
+            if (decodedOperation instanceof ErrorOp) {
+                throw new Error((decodedOperation as ErrorOp).errorCg.toStringifiedModel())
+            }
+            await this._execute(decodedOperation, curOperationConceptId, procedure, workingMemory)
 
             i++
         }
@@ -73,7 +78,7 @@ export class ControlUnit {
             glog().debug('---Op')
             glog().debug(nextOp.toStringifiedModel())
             conceptIds.push(...nextOp.getConceptIds())
-        } 
+        }
         if (conceptIds.length == 0) {
             throw new Error('Could not find first operation in procedure')
         } else if (conceptIds.length == 1) {
@@ -84,12 +89,44 @@ export class ControlUnit {
     }
 
     private async _decodeOperation(opConceptId: string, procedure: ConceptGraph): Promise<Operation> {
+        const operationTypeTemplateRule: ConceptGraph = await this.conceptGraphDao.getRuleByName('template_rule_get_operation_type')
+        const curOpCgModel: ConceptGraphModel = {}
+        curOpCgModel[opConceptId] = {}
+        const operationTypeRule: ConceptGraph = await this.ruleService.applyRuleToFirstMatch(operationTypeTemplateRule, ConceptGraph.fromModel(curOpCgModel))
+        const operationType: ConceptGraph = await this.ruleService.applyRuleToFirstMatch(operationTypeRule, procedure)
         
-        return new HaltOp()
+        const potentialOperationTypes: string[] = operationType.getConceptIds()
+        if (potentialOperationTypes.length == 0) {
+            return new ErrorOp(ConceptGraph.fromModel({
+                'cannot_decode_op_error': {
+                    '-instance_of->': 'error',
+                    '-has_message->': `Could not operation type of ${opConceptId}: operation is not instance of anything`
+                }
+            }))
+        } else {
+            switch (potentialOperationTypes[0]) {
+                case 'HaltOp':
+                    return new HaltOp()
+                case 'FetchOp':
+                    return new FetchOp()
+                case 'ApplyRuleOp':
+                    return new ApplyRuleOp()
+                case 'PrintConceptsOp':
+                    return new PrintConceptsOp()
+                default:
+                    return new ErrorOp(ConceptGraph.fromModel({
+                        'cannot_decode_op_error': {
+                            '-instance_of->': 'error',
+                            '-has_message->': `Could not operation type of ${opConceptId}: instance of an unknown operation type ${potentialOperationTypes[0]}`
+                        }
+                    }))
+            }
+        }
     }
 
-    private async _execute(op: Operation, args: ConceptGraph): Promise<ConceptGraph> {
-        return op.execute(args)
+    private async _execute(op: Operation, curOperationConceptId: string, procedure: ConceptGraph, workingMemory: ConceptGraph): Promise<void> {
+        const args: ConceptGraph = procedure.getConceptDefinitionByRelationType(curOperationConceptId, 'has_args')
+        op.execute(args, workingMemory, this.conceptGraphDao)
     }
 
 }

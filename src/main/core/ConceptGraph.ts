@@ -370,6 +370,15 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                 && (this.type ?? relation.type) === relation.type
         })
     }
+    
+    findTargetConceptIdByRelation(fromConceptId: string, relationId: string): string | null {     
+        this.forEachEdge((edgeId: string, edgeAttributes: Relation, sourceId: string, targetId: string, source: Concept, target: Concept) => {
+            if (fromConceptId === sourceId) {
+                return targetId
+            }
+        })   
+        return null
+    }
 
     filterRelationIds(relationQuery: { conceptId?: string; neighbourConceptId?: string; type?: string }): string[] {
         return this.filterEdges((relationId, relation, sourceConceptId, targetConceptId) => {

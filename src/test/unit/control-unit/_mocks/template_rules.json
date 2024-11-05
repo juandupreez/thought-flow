@@ -14,7 +14,6 @@
             "known_item_in_sequence": {},
             "?unknown_next_item": {},
             "known_next_item": {},
-
             "get_next_sequence_item_rule": {
                 "-has_hypothesis->": {
                     "?unknown_next_item": {},
@@ -30,6 +29,43 @@
                 },
                 "-has_conclusion->": {
                     "known_next_item": {}
+                }
+            }
+        }
+    },
+    "template_rule_get_operation_type": {
+        "-instance_of->": "template_rule",
+        "-has_hypothesis->": {
+            "?unknown_item": {}
+        },
+        "-has_mapping->": {
+            "known_item": {},
+            "?unknown_item": {
+                "-becomes->": "known_item"
+            }
+        },
+        "-has_conclusion->": {
+            "operation": {},
+            "known_item": {},
+            "?unkown_operation_type": {},
+            "known_operation_type": {},
+            "rule_get_operation_type": {
+                "-has_hypothesis->": {
+                    "known_item": {},
+                    "operation": {},
+                    "?unkown_operation_type": {
+                        "<-instance_of-": "known_item",
+                        "-is_a->": "operation"
+                    }
+                },
+                "-has_mapping->": {
+                    "known_operation_type": {},
+                    "?unkown_operation_type": {
+                        "-becomes->": "known_operation_type"
+                    }
+                },
+                "-has_conclusion->": {
+                    "known_operation_type": {}
                 }
             }
         }

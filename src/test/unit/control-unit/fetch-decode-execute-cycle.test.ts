@@ -29,7 +29,7 @@ describe(ControlUnit, () => {
                         "<-first-": "print_all_letters_in_word_sky",
                         "-instance_of->": {
                             "FetchOp": {
-                                "-is_a->": "Operation"
+                                "-is_a->": "operation"
                             }
                         },
                         "-has_args->": {
@@ -47,7 +47,7 @@ describe(ControlUnit, () => {
                     "op_get_letter_s": {
                         "-instance_of->": {
                             "ApplyRuleOp": {
-                                "-is_a->": "Operation"
+                                "-is_a->": "operation"
                             }
                         },
                         "-has_args->": "rule_get_first_item",
@@ -56,7 +56,7 @@ describe(ControlUnit, () => {
                     "op_print_letter_s": {
                         "-instance_of->": {
                             "PrintConceptsOp": {
-                                "-is_a->": "Operation"
+                                "-is_a->": "operation"
                             }
                         },
                         "-has_args->": {
@@ -69,7 +69,7 @@ describe(ControlUnit, () => {
                     "op_get_letter_k": {
                         "-instance_of->": {
                             "ApplyRuleOp": {
-                                "-is_a->": "Operation"
+                                "-is_a->": "operation"
                             }
                         },
                         "-has_args->": "rule_get_next_item",
@@ -78,7 +78,7 @@ describe(ControlUnit, () => {
                     "op_print_letter_k": {
                         "-instance_of->": {
                             "PrintConceptsOp": {
-                                "-is_a->": "Operation"
+                                "-is_a->": "operation"
                             }
                         },
                         "-has_args->": {
@@ -91,7 +91,7 @@ describe(ControlUnit, () => {
                     "op_get_letter_y": {
                         "-instance_of->": {
                             "ApplyRuleOp": {
-                                "-is_a->": "Operation"
+                                "-is_a->": "operation"
                             }
                         },
                         "-has_args->": "rule_get_next_item",
@@ -100,7 +100,7 @@ describe(ControlUnit, () => {
                     "op_print_letter_y": {
                         "-instance_of->": {
                             "PrintConceptsOp": {
-                                "-is_a->": "Operation"
+                                "-is_a->": "operation"
                             }
                         },
                         "-has_args->": {
@@ -113,7 +113,7 @@ describe(ControlUnit, () => {
                     "op_halt_print_word_sky": {
                         "-instance_of->": {
                             "HaltOp": {
-                                "-is_a->": "Operation"
+                                "-is_a->": "operation"
                             }
                         }
                     }
