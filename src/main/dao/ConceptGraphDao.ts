@@ -8,6 +8,7 @@ export interface SimpleRelation {
 }
 
 export interface ConceptGraphDao {
+    findAndMergeMatches(args: ConceptGraph): Promise<ConceptGraph>;
     getRuleByName(arg0: string): Promise<ConceptGraph>
     createConceptGraphModel(cgModel: ConceptGraphModel): Promise<void>
     createConceptIfNotExists(conceptId: string): Promise<void>

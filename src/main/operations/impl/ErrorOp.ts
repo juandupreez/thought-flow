@@ -9,8 +9,7 @@ export class ErrorOp implements Operation {
         this.errorCg = errorCg
     }
 
-    async execute(args: ConceptGraph, workingMemory: ConceptGraph, conceptGraphDao: ConceptGraphDao): Promise<ConceptGraph>{
-        return args
+    async execute(args: ConceptGraph, workingMemory: ConceptGraph, conceptGraphDao: ConceptGraphDao): Promise<void>{
     }
 
 }

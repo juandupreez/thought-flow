@@ -11,6 +11,9 @@ export class InMemoryConceptGraphDao implements ConceptGraphDao {
     private readonly conceptMatchService: ConceptMatchService = new ConceptMatchService()
     private readonly ruleService: RuleService = new RuleService()
 
+    async findAndMergeMatches(query: ConceptGraph): Promise<ConceptGraph> {
+        return this.conceptMatchService.getAndMergeMatches(query, this.conceptGraphDb)
+    }
 
     async createConceptGraphModel(cgModel: ConceptGraphModel): Promise<void> {
         this.conceptGraphDb.mergeFrom(ConceptGraph.fromModel(cgModel))

@@ -33,6 +33,9 @@ describe(ControlUnit, () => {
                             }
                         },
                         "-has_args->": {
+                            "?unknown_letter": {},
+                            "letter": {},
+                            "word": {},
                             "word_sky": {
                                 "-instance_of->": "word",
                                 "-has_part->": {
