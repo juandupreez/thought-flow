@@ -1,5 +1,6 @@
 import { ConceptGraph } from "../../../main/core/ConceptGraph"
 import { ConceptGraphModel } from "../../../main/model/ConceptGraphModel"
+import { glog } from "../../../main/util/Logger"
 
 describe(ConceptGraph, () => {
 
@@ -182,6 +183,84 @@ describe(ConceptGraph, () => {
             const model: ConceptGraphModel = cg.toModel()
 
             expect(model).toEqual(originalModel)
+        })
+
+        it('should parse ":to_all" relations to point to all recursive sub concepts', () => {
+            const originalModel: ConceptGraphModel = {
+                'sky': {
+                    '-defined_by:to_all->': {
+                        'word_sky': {
+                            "-has_part:to_all->": {
+                                "s_in_sky": {
+                                    "-instance_of->": 'letter_s'
+                                },
+                                "k_in_sky": {
+                                    "-instance_of->": 'letter_k'
+                                },
+                                "y_in_sky": {
+                                    "-instance_of->": 'letter_y'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            const cg: ConceptGraph = ConceptGraph.fromModel(originalModel)
+
+            const model: ConceptGraphModel = cg.toModel('sky')
+            expect(model).toEqual({
+                "sky": {
+                    "-defined_by->": {
+                        "letter_y": {
+                            "<-instance_of-": {
+                                "y_in_sky": {
+                                    "<-has_part-": {
+                                        "word_sky": {
+                                            "-has_part->": {
+                                                "letter_y": {},
+                                                "letter_k": {
+                                                    "<-instance_of-": {
+                                                        "k_in_sky": {
+                                                            "<-has_part-": {
+                                                                "word_sky": {
+                                                                    "-has_part->": {
+                                                                        "letter_s": {
+                                                                            "<-instance_of-": {
+                                                                                "s_in_sky": {
+                                                                                    "<-has_part-": {
+                                                                                        "word_sky": {
+                                                                                            "<-defined_by-": {
+                                                                                                "sky": {
+                                                                                                    "-defined_by->": {
+                                                                                                        "y_in_sky": {},
+                                                                                                        "letter_k": {},
+                                                                                                        "k_in_sky": {},
+                                                                                                        "letter_s": {},
+                                                                                                        "s_in_sky": {}
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+
         })
     })
 

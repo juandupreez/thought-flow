@@ -2,7 +2,7 @@ import Graph from "graphology"
 import { Concept } from "../model/Concept"
 import { Relation } from "../model/Relation"
 import { IdGenerator } from "../util/IdGenerator"
-import { ConceptGraphModel } from "../model/ConceptGraphModel"
+import { ConceptGraphModel, RelationKeyWithArrows } from "../model/ConceptGraphModel"
 import { isConceptUnknown, parseConceptIdAndIsUnknown } from "../util/common"
 
 export class ConceptGraph extends Graph<Concept, Relation> {
@@ -132,6 +132,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                         .split('-').join('')
                         .split('<').join('')
                         .split('>').join('')
+                        .split(':to_all').join('')
                     const direction: 'sourceToTarget' | 'targetToSource' = relationKey.startsWith('<-') ? 'targetToSource' : 'sourceToTarget'
                     if (Object.prototype.hasOwnProperty.call(conceptRelations, relationKey)) {
                         const relatedConcept: string | ConceptGraphModel = conceptRelations[relationKey as `-${string}->` | `<-${string}-`]
@@ -143,6 +144,12 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                                 conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, relatedConceptParsed.conceptId, conceptId)
                             }
                         } else {
+                            if (relationKey.endsWith(':to_all->')) {
+                                const recursiveSubConceptIds: string[] = this.getAllModelConceptIds(relatedConcept)
+                                for (const subConceptId of recursiveSubConceptIds) {
+                                    conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, conceptId, subConceptId)
+                                }
+                            }
                             for (const relatedConceptId in relatedConcept) {
                                 if (Object.prototype.hasOwnProperty.call(relatedConcept, relatedConceptId)) {
                                     const relatedConceptParsed: { conceptId: string, isUnknown: boolean | undefined } = parseConceptIdAndIsUnknown(relatedConceptId)
@@ -161,6 +168,27 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                 }
             }
         }
+    }
+
+    static getAllModelConceptIds(conceptModel: ConceptGraphModel): string[] {
+        const curLevelConceptIds: string[] = []
+        for (const conceptKey in conceptModel) {
+            if (Object.prototype.hasOwnProperty.call(conceptModel, conceptKey)) {
+                curLevelConceptIds.push(conceptKey)
+                const relationWithArrows: { [relationKey: RelationKeyWithArrows]: string | ConceptGraphModel } = conceptModel[conceptKey];
+                for (const relationWithArrowsKey in relationWithArrows) {
+                    if (Object.prototype.hasOwnProperty.call(relationWithArrows, relationWithArrowsKey)) {
+                        const subConcept: ConceptGraphModel | string = relationWithArrows[relationWithArrowsKey as RelationKeyWithArrows]
+                        if (typeof subConcept === 'string') {
+                            curLevelConceptIds.push(subConcept)
+                        } else {
+                            curLevelConceptIds.push(...this.getAllModelConceptIds(subConcept))
+                        }
+                    }
+                }
+            }
+        }
+        return curLevelConceptIds
     }
 
     /**
@@ -182,9 +210,9 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                 }
             }
         }
-
+    
         getConceptDefinitionByRelationType('is') should return
-
+    
         {
             "object": {
                 "-in->": "sky"
@@ -370,13 +398,13 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                 && (this.type ?? relation.type) === relation.type
         })
     }
-    
-    findTargetConceptIdByRelation(fromConceptId: string, relationId: string): string | null {     
+
+    findTargetConceptIdByRelation(fromConceptId: string, relationId: string): string | null {
         this.forEachEdge((edgeId: string, edgeAttributes: Relation, sourceId: string, targetId: string, source: Concept, target: Concept) => {
             if (fromConceptId === sourceId) {
                 return targetId
             }
-        })   
+        })
         return null
     }
 
