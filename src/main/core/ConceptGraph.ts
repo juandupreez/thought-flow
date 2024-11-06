@@ -147,7 +147,8 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                             if (relationKey.endsWith(':to_all->')) {
                                 const recursiveSubConceptIds: string[] = this.getAllModelConceptIds(relatedConcept)
                                 for (const subConceptId of recursiveSubConceptIds) {
-                                    conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, conceptId, subConceptId)
+                                    const relatedConceptParsed: { conceptId: string, isUnknown: boolean | undefined } = parseConceptIdAndIsUnknown(subConceptId)
+                                    conceptGraph.addRelationByTypeIfNotExists(relationKeyWithoutArrows, conceptId, relatedConceptParsed.conceptId)
                                 }
                             }
                             for (const relatedConceptId in relatedConcept) {

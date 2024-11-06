@@ -262,6 +262,63 @@ describe(ConceptGraph, () => {
             })
 
         })
+
+        it('should parse ":to_all" and unknown concept ids', () => {
+            const originalModel: ConceptGraphModel = {
+                "rule_get_first_sequence_item": {
+                    "-instance_of->": "rule",
+                    "-has_hypothesis:to_all->": {
+                        "?unknown_collection": {
+                            "-first->": "?unknown_sequence_item"
+                        }
+                    },
+                    "-has_mapping:to_all->": {
+                        "?unknown_sequence_item": {
+                            "-becomes->": "?first_item"
+                        }
+                    },
+                    "-has_conclusion:to_all->": {
+                        "?first_item": {}
+                    }
+                }
+            }
+            const cg: ConceptGraph = ConceptGraph.fromModel(originalModel)
+
+            glog().info(cg.toStringifiedModel('rule_get_first_sequence_item'))
+
+            const model: ConceptGraphModel = cg.toModel('rule_get_first_sequence_item')
+            expect(model).toEqual({
+                "rule_get_first_sequence_item": {
+                    "-has_mapping->": {
+                        "?first_item": {
+                            "<-becomes-": {
+                                "?unknown_sequence_item": {
+                                    "<-first-": {
+                                        "?unknown_collection": {
+                                            "<-has_hypothesis-": {
+                                                "rule_get_first_sequence_item": {
+                                                    "-has_conclusion->": "?first_item",
+                                                    "-has_hypothesis->": {
+                                                        "?unknown_sequence_item": {
+                                                            "<-has_mapping-": {
+                                                                "rule_get_first_sequence_item": {
+                                                                    "-instance_of->": "rule"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+
+        })
     })
 
 })
