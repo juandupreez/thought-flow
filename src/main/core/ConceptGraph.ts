@@ -192,6 +192,23 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         return curLevelConceptIds
     }
 
+    getConceptDefinition(sourceConceptId: string): ConceptGraph {
+        return this.getConceptDefinitionByRelationType(sourceConceptId, 'defined_by')
+    }
+
+    wrapAsDefinitionOf(conceptId: string) {
+        this.addConceptByIdIfNotExists(conceptId, {
+            description: conceptId,
+            isUnknown: false
+        })
+
+        this.forEachNode((existingConceptId: string) => {
+            if (existingConceptId !== conceptId) {
+                this.addRelationByTypeIfNotExists('defined_by', conceptId, existingConceptId)
+            }
+        })
+    }
+
     /**
      * Gets defining concepts and relations
      * 

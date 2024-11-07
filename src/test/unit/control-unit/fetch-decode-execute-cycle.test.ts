@@ -32,17 +32,21 @@ describe(ControlUnit, () => {
                                 "-is_a->": "operation"
                             }
                         },
-                        "-has_args->": {
-                            "?unknown_letter": {},
-                            "letter": {},
-                            "word": {},
-                            "word_sky": {
-                                "-instance_of->": "word",
-                                "-has_part->": {
-                                    "?unknown_letter": {
-                                        "-instance_of->": "letter"
+                        "-has_args:to_all->": {
+                            "query": {
+                                "-defined_by:to_all->": {
+                                    "word_sky": {
+                                        "-instance_of->": "word",
+                                        "-has_part->": {
+                                            "?unknown_letter": {
+                                                "-instance_of->": "letter"
+                                            }
+                                        }
                                     }
                                 }
+                            },
+                            "working_memory_slot": {
+                                "-defined_by->": "slot_000"
                             }
                         },
                         "-next->": "op_get_letter_s"
@@ -53,7 +57,17 @@ describe(ControlUnit, () => {
                                 "-is_a->": "operation"
                             }
                         },
-                        "-has_args->": "rule_get_first_item",
+                        "-has_args->": {
+                            "apply_rule_op_arg-rule": {
+                                "-defined_by->": "rule_get_first_item"
+                            },
+                            "apply_rule_op_arg-source_slot": {
+                                "-defined_by->": "slot_000"
+                            },
+                            "apply_rule_op_arg-result_slot": {
+                                "-defined_by->": "slot_001"
+                            }
+                        },
                         "-next->": "op_print_letter_s"
                     },
                     "op_print_letter_s": {
@@ -63,56 +77,56 @@ describe(ControlUnit, () => {
                             }
                         },
                         "-has_args->": {
-                            "?unknown_letter": {
-                                "-instance_of->": "letter"
-                            }
-                        },
-                        "-next->": "op_get_letter_k"
-                    },
-                    "op_get_letter_k": {
-                        "-instance_of->": {
-                            "ApplyRuleOp": {
-                                "-is_a->": "operation"
-                            }
-                        },
-                        "-has_args->": "rule_get_next_item",
-                        "-next->": "op_print_letter_k"
-                    },
-                    "op_print_letter_k": {
-                        "-instance_of->": {
-                            "PrintConceptsOp": {
-                                "-is_a->": "operation"
-                            }
-                        },
-                        "-has_args->": {
-                            "?unknown_letter": {
-                                "-instance_of->": "letter"
-                            }
-                        },
-                        "-next->": "op_get_letter_y"
-                    },
-                    "op_get_letter_y": {
-                        "-instance_of->": {
-                            "ApplyRuleOp": {
-                                "-is_a->": "operation"
-                            }
-                        },
-                        "-has_args->": "rule_get_next_item",
-                        "-next->": "op_print_letter_y"
-                    },
-                    "op_print_letter_y": {
-                        "-instance_of->": {
-                            "PrintConceptsOp": {
-                                "-is_a->": "operation"
-                            }
-                        },
-                        "-has_args->": {
-                            "?unknown_letter": {
-                                "-instance_of->": "letter"
+                            "print_concepts_op_arg-slot_to_print": {
+                                "-defined_by->": "slot_001"
                             }
                         },
                         "-next->": "op_halt_print_word_sky"
                     },
+                    // "op_get_letter_k": {
+                    //     "-instance_of->": {
+                    //         "ApplyRuleOp": {
+                    //             "-is_a->": "operation"
+                    //         }
+                    //     },
+                    //     "-has_args->": "rule_get_next_item",
+                    //     "-next->": "op_print_letter_k"
+                    // },
+                    // "op_print_letter_k": {
+                    //     "-instance_of->": {
+                    //         "PrintConceptsOp": {
+                    //             "-is_a->": "operation"
+                    //         }
+                    //     },
+                    //     "-has_args->": {
+                    //         "?unknown_letter": {
+                    //             "-instance_of->": "letter"
+                    //         }
+                    //     },
+                    //     "-next->": "op_get_letter_y"
+                    // },
+                    // "op_get_letter_y": {
+                    //     "-instance_of->": {
+                    //         "ApplyRuleOp": {
+                    //             "-is_a->": "operation"
+                    //         }
+                    //     },
+                    //     "-has_args->": "rule_get_next_item",
+                    //     "-next->": "op_print_letter_y"
+                    // },
+                    // "op_print_letter_y": {
+                    //     "-instance_of->": {
+                    //         "PrintConceptsOp": {
+                    //             "-is_a->": "operation"
+                    //         }
+                    //     },
+                    //     "-has_args->": {
+                    //         "?unknown_letter": {
+                    //             "-instance_of->": "letter"
+                    //         }
+                    //     },
+                    //     "-next->": "op_halt_print_word_sky"
+                    // },
                     "op_halt_print_word_sky": {
                         "-instance_of->": {
                             "HaltOp": {

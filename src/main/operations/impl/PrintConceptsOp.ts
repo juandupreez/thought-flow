@@ -4,10 +4,11 @@ import { glog } from "../../util/Logger";
 import { Operation } from "../Operation";
 
 export class PrintConceptsOp implements Operation {
-    async execute(args: ConceptGraph, workingMemory: ConceptGraph, conceptGraphDao: ConceptGraphDao): Promise<void>{
+    async execute(args: ConceptGraph, workingMemory: ConceptGraph, conceptGraphDao: ConceptGraphDao): Promise<ConceptGraph>{
         workingMemory.getConceptIds().forEach((conceptId: string) => {
             glog().info(`OFFICIAL PRINT: ${conceptId}`)
         })
+        return new ConceptGraph()
         
     }
 

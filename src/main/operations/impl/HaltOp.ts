@@ -3,7 +3,8 @@ import { ConceptGraphDao } from "../../dao/ConceptGraphDao";
 import { Operation } from "../Operation";
 
 export class HaltOp implements Operation {
-    async execute(args: ConceptGraph, workingMemory: ConceptGraph, conceptGraphDao: ConceptGraphDao): Promise<void>{
+    async execute(args: ConceptGraph, workingMemory: ConceptGraph, conceptGraphDao: ConceptGraphDao): Promise<ConceptGraph>{
+        return new ConceptGraph()
     }
 
 }

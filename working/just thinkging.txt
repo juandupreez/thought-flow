@@ -46,3 +46,53 @@ Possible Modules
     timing
     reading
     speaking
+
+
+
+
+
+
+----- After a few months 2 Nov 2024
+
+Basic Input / Output
+
+Output Algorithm/Procedure/Sequence of Rules inside a control unit
+
+    KB
+    Working Memory / Registers
+    Active Concept Graph / PC / Program Counter
+
+    while true:
+        rule = fetchNextRule(cur_rule)
+        decoded_rule = decode(rule)
+        decoded_rule.execute()
+
+
+For example, print all letters in "sky"
+
+    Fetch sequence of letters for word "sky" in kb to working memory
+        OP: FETCH word:sky into working_memory_1
+    move first letter of "sky" to active concept
+        OP: APPLY_RULE get_first_item working_memory_1
+    print active concept
+        OP: PRINT single character
+    get next letter of "sky" after "s" to active concept
+        OP: APPLY_RULE get_next_item working_memory_1 "s"
+    print active concept
+        OP: PRINT single character
+    get next letter of "sky" after "k" to active concept
+        OP: APPLY_RULE get_next_item working_memory_1 "k"
+    print active concept
+        OP: PRINT single character
+    get next letter of "sky" after "y" to active concept
+        OP: APPLY_RULE get_next_item working_memory_1 "y"
+    print active concept
+        OP: HALT
+
+
+
+
+
+
+
+

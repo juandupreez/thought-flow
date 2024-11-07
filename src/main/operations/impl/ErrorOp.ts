@@ -3,13 +3,14 @@ import { ConceptGraphDao } from "../../dao/ConceptGraphDao";
 import { Operation } from "../Operation";
 
 export class ErrorOp implements Operation {
-    errorCg: ConceptGraph;
+    errorCg: ConceptGraph
 
     constructor(errorCg: ConceptGraph) {
         this.errorCg = errorCg
     }
 
-    async execute(args: ConceptGraph, workingMemory: ConceptGraph, conceptGraphDao: ConceptGraphDao): Promise<void>{
+    async execute(args: ConceptGraph, workingMemory: ConceptGraph, conceptGraphDao: ConceptGraphDao): Promise<ConceptGraph>{
+        return this.errorCg
     }
 
 }

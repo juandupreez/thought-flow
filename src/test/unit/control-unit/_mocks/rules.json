@@ -1,19 +1,17 @@
 {
     "rule_get_first_sequence_item": {
         "-instance_of->": "rule",
-        "-has_hypothesis->": {
-            "?unknown_sequence_item": {},
+        "-has_hypothesis:to_all->": {
             "?unknown_collection": {
                 "-first->": "?unknown_sequence_item"
             }
         },
-        "-has_mapping->": {
-            "?first_item": {},
+        "-has_mapping:to_all->": {
             "?unknown_sequence_item": {
                 "-becomes->": "?first_item"
             }
         },
-        "-has_conclusion->": {
+        "-has_conclusion:to_all->": {
             "?first_item": {}
         }
     }

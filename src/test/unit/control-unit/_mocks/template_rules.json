@@ -1,33 +1,28 @@
 {
     "template_rule_create_next_sequence_item_rule": {
         "-instance_of->": "template_rule",
-        "-has_hypothesis->": {
+        "-has_hypothesis:to_all->": {
             "?unknown_item_in_sequence": {}
         },
-        "-has_mapping->": {
-            "known_item_in_sequence": {},
+        "-has_mapping:to_all->": {
             "?unknown_item_in_sequence": {
                 "-becomes->": "known_item_in_sequence"
             }
         },
-        "-has_conclusion->": {
-            "known_item_in_sequence": {},
-            "?unknown_next_item": {},
-            "known_next_item": {},
+        "-has_conclusion:to_all->": {
             "get_next_sequence_item_rule": {
-                "-has_hypothesis->": {
+                "-has_hypothesis:to_all->": {
                     "?unknown_next_item": {},
                     "known_item_in_sequence": {
                         "-next->": "?unknown_next_item"
                     }
                 },
-                "-has_mapping->": {
-                    "known_next_item": {},
+                "-has_mapping:to_all->": {
                     "?unknown_next_item": {
                         "-becomes->": "known_next_item"
                     }
                 },
-                "-has_conclusion->": {
+                "-has_conclusion:to_all->": {
                     "known_next_item": {}
                 }
             }
@@ -35,36 +30,28 @@
     },
     "template_rule_get_operation_type": {
         "-instance_of->": "template_rule",
-        "-has_hypothesis->": {
+        "-has_hypothesis:to_all->": {
             "?unknown_item": {}
         },
-        "-has_mapping->": {
-            "known_item": {},
+        "-has_mapping:to_all->": {
             "?unknown_item": {
                 "-becomes->": "known_item"
             }
         },
-        "-has_conclusion->": {
-            "operation": {},
-            "known_item": {},
-            "?unkown_operation_type": {},
-            "known_operation_type": {},
+        "-has_conclusion:to_all->": {
             "rule_get_operation_type": {
-                "-has_hypothesis->": {
-                    "known_item": {},
-                    "operation": {},
+                "-has_hypothesis:to_all->": {
                     "?unkown_operation_type": {
                         "<-instance_of-": "known_item",
                         "-is_a->": "operation"
                     }
                 },
-                "-has_mapping->": {
-                    "known_operation_type": {},
+                "-has_mapping:to_all->": {
                     "?unkown_operation_type": {
                         "-becomes->": "known_operation_type"
                     }
                 },
-                "-has_conclusion->": {
+                "-has_conclusion:to_all->": {
                     "known_operation_type": {}
                 }
             }

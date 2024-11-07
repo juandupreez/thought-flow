@@ -46,7 +46,10 @@ export class ControlUnit {
             if (decodedOperation instanceof ErrorOp) {
                 throw new Error((decodedOperation as ErrorOp).errorCg.toStringifiedModel())
             }
-            await this._execute(decodedOperation, curOperationConceptId, procedure, workingMemory)
+            const errorCg: ConceptGraph = await this._execute(decodedOperation, curOperationConceptId, procedure, workingMemory)
+            if (!errorCg.isEmpty()) {
+                throw new Error(errorCg.toStringifiedModel())
+            }
 
             i++
         }
@@ -124,9 +127,9 @@ export class ControlUnit {
         }
     }
 
-    private async _execute(op: Operation, curOperationConceptId: string, procedure: ConceptGraph, workingMemory: ConceptGraph): Promise<void> {
+    private async _execute(op: Operation, curOperationConceptId: string, procedure: ConceptGraph, workingMemory: ConceptGraph): Promise<ConceptGraph> {
         const args: ConceptGraph = procedure.getConceptDefinitionByRelationType(curOperationConceptId, 'has_args')
-        op.execute(args, workingMemory, this.conceptGraphDao)
+        return op.execute(args, workingMemory, this.conceptGraphDao)
     }
 
 }
