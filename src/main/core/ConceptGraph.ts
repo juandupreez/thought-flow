@@ -249,7 +249,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                 conceptIds.push(targetConceptId)
                 if (shouldIncludeOriginalConcept) {
                     matchedConceptGraph.addConceptByIdIfNotExists(sourceConceptId, sourceConcept)
-                    matchedConceptGraph.addEdgeWithKey(edgeId, sourceConceptId, targetConceptId, relation)
+                    matchedConceptGraph.addRelationByTypeIfNotExists(relation.type, sourceConceptId, targetConceptId)
                 }
             }
         })
@@ -257,7 +257,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
             if (conceptIds.includes(sourceConceptId) && conceptIds.includes(targetConceptId)) {
                 matchedConceptGraph.addConceptByIdIfNotExists(sourceConceptId, sourceConcept)
                 matchedConceptGraph.addConceptByIdIfNotExists(targetConceptId, targetConcept)
-                matchedConceptGraph.addEdgeWithKey(edgeId, sourceConceptId, targetConceptId, relation)
+                matchedConceptGraph.addRelationByTypeIfNotExists(relation.type, sourceConceptId, targetConceptId)
             }
         })
 

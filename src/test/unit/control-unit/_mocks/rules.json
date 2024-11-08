@@ -16,7 +16,7 @@
                 "<-has_mapping-": "rule_get_first_sequence_item",
                 "-defined_by:to_all->": {
                     "?unknown_sequence_item": {
-                        "-becomes->": "?first_item"
+                        "-becomes->": "first_item"
                     }
                 }
             },
@@ -24,7 +24,7 @@
                 "-instance_of->": "conclusion",
                 "<-has_conclusion-": "rule_get_first_sequence_item",
                 "-defined_by:to_all->": {
-                    "?first_item": {}
+                    "first_item": {}
                 }
             }
         }

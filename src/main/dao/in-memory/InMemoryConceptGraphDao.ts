@@ -20,27 +20,17 @@ export class InMemoryConceptGraphDao implements ConceptGraphDao {
     }
 
     async getRuleByName(ruleName: string): Promise<ConceptGraph> {
-        const foundRule: ConceptGraph = new ConceptGraph()
-
-        const ruleStructureModel: ConceptGraphModel = {}
-        ruleStructureModel[ruleName] = {
-            '-has_hypothesis->': '?unknown_hypothesis',
-            '-has_mapping->': '?unknown_mapping',
-            '-has_conclusion->': '?unknown_conclusion'
+        const potentialRule: ConceptGraph = this.conceptGraphDb.getConceptDefinition(ruleName, true)
+        const ruleInstanceConceptIds: string[] = this.conceptGraphDb.getConceptDefinitionByRelationType(ruleName, 'instance_of').getConceptIds()
+        if (ruleInstanceConceptIds.includes('rule')) {
+            return potentialRule.mergeFrom(ConceptGraph.fromModel({
+                'rule': {
+                    '<-instance_of-': ruleName
+                }
+            }))
+        } else {
+            return new ConceptGraph()
         }
-        const ruleStructure: ConceptGraph = ConceptGraph.fromModel(ruleStructureModel)
-
-        const potentialRule: ConceptGraph = this.conceptMatchService.getAndMergeMatches(ruleStructure, this.conceptGraphDb)
-
-        foundRule.mergeFrom(potentialRule)
-        const potentialHypothesis: ConceptGraph = this.conceptGraphDb.getConceptDefinitionByRelationType(ruleName, 'has_hypothesis', true)
-        foundRule.mergeFrom(potentialHypothesis)
-        const potentialMapping: ConceptGraph = this.conceptGraphDb.getConceptDefinitionByRelationType(ruleName, 'has_mapping', true)
-        foundRule.mergeFrom(potentialMapping)
-        const potentialConclusion: ConceptGraph = this.conceptGraphDb.getConceptDefinitionByRelationType(ruleName, 'has_conclusion', true)
-        foundRule.mergeFrom(potentialConclusion)
-
-        return foundRule
     }
 
     async createConceptIfNotExists(conceptId: string): Promise<void> {
