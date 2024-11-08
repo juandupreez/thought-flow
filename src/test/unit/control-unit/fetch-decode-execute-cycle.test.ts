@@ -39,20 +39,16 @@ describe(ControlUnit, () => {
                                     "word_sky": {
                                         "-instance_of->": "word",
                                         "-has_part->": {
-                                            "at_least_one:unknown_letter_instance": {
+                                            "?unknown_letter_instance": {
                                                 "-instance_of->": {
-                                                    "{1}:unknown_letter": {
+                                                    "?unknown_letter": {
                                                         "-is_a->": 'letter'
                                                     }
                                                 },
-                                                '-next->': "zero_or_one:unknown_next_letter_instance"
+                                                '-next->': "?unknown_next_letter_instance"
                                             }
                                         },
-                                        "-first->": {
-                                            "at_least_1:unknown_first_letter_instance": {
-                                                '-next->': ":unknown_second_letter_instance"
-                                            }
-                                        }
+                                        "-first->": "?unknown_first_letter_instance"
                                     }
                                 }
                             },

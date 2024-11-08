@@ -29,12 +29,17 @@ export class RuleService {
     glog().debug('\n|---------START APPLYING RULE-------|')
     glog().debug('Arguments', args.toStringifiedModel())
     const rootRuleConceptId: string = this.getRootRuleConceptId(rule)
-    const hypothesis: ConceptGraph = rule.getConceptDefinitionByRelationType(rootRuleConceptId, 'has_hypothesis')
-    glog().debug('Hypothesis', hypothesis.toStringifiedModel())
-    const mappings: ConceptGraph = rule.getConceptDefinitionByRelationType(rootRuleConceptId, 'has_mapping')
-    glog().debug('Mappings', hypothesis.toStringifiedModel())
-    const conclusion: ConceptGraph = rule.getConceptDefinitionByRelationType(rootRuleConceptId, 'has_conclusion')
-    glog().debug('Conclusion', conclusion.toStringifiedModel())
+    glog().debug('Root Rule Concept Id: ', rootRuleConceptId)
+    const hypothesisConceptId: string = rule.getConceptDefinitionByRelationType(rootRuleConceptId, 'has_hypothesis').getConceptIds()[0] ?? 'no_concept_id'
+    const hypothesis: ConceptGraph = rule.getConceptDefinition(hypothesisConceptId)
+    glog().debug(`Hypothesis ${hypothesisConceptId} `, hypothesis.toStringifiedModel())
+    const mappingConceptId: string = rule.getConceptDefinitionByRelationType(rootRuleConceptId, 'has_mapping').getConceptIds()[0] ?? 'no_concept_id'
+    const mapping: ConceptGraph = rule.getConceptDefinition(mappingConceptId)
+    glog().debug(`Mapping ${mappingConceptId} `, mapping.toStringifiedModel())
+    const conclusionConceptId: string = rule.getConceptDefinitionByRelationType(rootRuleConceptId, 'has_conclusion').getConceptIds()[0] ?? 'no_concept_id'
+    const conclusion: ConceptGraph = rule.getConceptDefinition(conclusionConceptId)
+    glog().debug(`Conclusion ${conclusionConceptId} `, conclusion.toStringifiedModel())
+    
     const possibleMatchesWithHypothesis: ConceptGraph[] = this.conceptMatchService.getMatches(hypothesis, args, { shouldIncludeQueryInResult: true })
     if (possibleMatchesWithHypothesis.length === 0) {
       glog().debug('No matches found')
@@ -49,7 +54,7 @@ export class RuleService {
     for (const possibleMatchWithHypothesis of possibleMatchesWithHypothesis) {
 
       const result: ConceptGraph = ConceptGraph.copyFrom(conclusion)
-      mappings.forEachEdge((ruleRelationId: string, ruleRelation,
+      mapping.forEachEdge((ruleRelationId: string, ruleRelation,
         hypothesisConceptId, conclusionConceptId,
         hypothesisConcept, conclusionConcept
       ) => {
@@ -88,9 +93,7 @@ export class RuleService {
   getRootRuleConceptId(rule: ConceptGraph): string {
     const ruleStructure: ConceptGraph = ConceptGraph.fromModel({
       '?unkown_rule_name': {
-        '-has_hypothesis->': '?unknown_hypothesis',
-        '-has_mapping->': '?unknown_mapping',
-        '-has_conclusion->': '?unknown_conclusion'
+        '-instance_of->': 'rule'
       }
     })
     const potentialRules: ConceptGraph[] = this.conceptMatchService.getMatches(ruleStructure, rule)

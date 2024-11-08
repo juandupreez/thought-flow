@@ -5,7 +5,7 @@ import { RuleService } from "../../../main/service/RuleService"
 import { LogLevel, glog } from "../../../main/util/Logger"
 
 global.console = require('console')
-glog().setLogLevel(LogLevel.INFO)
+glog().setLogLevel(LogLevel.DEBUG)
 
 describe('Sequence Mechanics', () => {
 
@@ -47,53 +47,90 @@ describe('Sequence Mechanics', () => {
         })
         const getFirstItemInSequenceRule: ConceptGraph = ConceptGraph.fromModel({
             'get_first_sequence_item_rule': {
-                '-has_hypothesis->': {
-                    '?unknown_first_item': {},
-                    '?unknown_collection': {
-                        '-first->': '?unknown_first_item'
+                '-instance_of->': 'rule',
+                '-defined_by:to_all->': {
+                    'get_first_sequence_item_rule-hypothesis': {
+                        '-instance_of->': 'hypothesis',
+                        '<-has_hypothesis-': 'get_first_sequence_item_rule',
+                        '-defined_by:to_all->': {
+                            '?unknown_collection': {
+                                '-first->': '?unknown_first_item'
+                            }
+                        }
+                    },
+                    'get_first_sequence_item_rule-mapping': {
+                        '-instance_of->': 'mapping',
+                        '<-has_mapping-': 'get_first_sequence_item_rule',
+                        '-defined_by:to_all->': {
+                            '?unknown_first_item': {
+                                '-becomes->': 'known_first_item'
+                            }
+                        }
+                    },
+                    'get_first_sequence_item_rule-conclusion': {
+                        '<-has_conclusion-': 'get_first_sequence_item_rule',
+                        '-instance_of->': 'conclusion',
+                        '-defined_by:to_all->': {
+                            'known_first_item': {}
+                        }
                     }
-                },
-                '-has_mapping->': {
-                    'known_first_item': {},
-                    '?unknown_first_item': {
-                        '-becomes->': 'known_first_item'
-                    }
-                },
-                '-has_conclusion->': {
-                    'known_first_item': {}
                 }
             }
         })
         const getNextItemInSequenceRule: ConceptGraph = ConceptGraph.fromModel({
-            'create_next_sequence_item_rule': {
-                '-has_hypothesis->': {
-                    '?unknown_sequence_item': {}
-                },
-                '-has_mapping->': {
-                    'known_sequence_item': {},
-                    '?unknown_sequence_item': {
-                        '-becomes->': 'known_sequence_item'
-                    }
-                },
-                '-has_conclusion->': {
-                    'known_sequence_item': {},
-                    '?unknown_next_item': {},
-                    'known_next_item': {},
-                    'get_next_sequence_item_rule': {
-                        '-has_hypothesis->': {
-                            '?unknown_next_item': {},
-                            'known_sequence_item': {
-                                '-next->': '?unknown_next_item'
+            'create_next_sequence_item_rule_template': {
+                '-instance_of->': 'rule',
+                '-defined_by:to_all->': {
+                    'create_next_sequence_item_rule_template-hypothesis': {
+                        '-instance_of->': 'hypothesis',
+                        '<-has_hypothesis-': 'create_next_sequence_item_rule_template',
+                        '-defined_by:to_all->': {
+                            '?unknown_sequence_item': {}
+                        }
+                    },
+                    'create_next_sequence_item_rule_template-mapping': {
+                        '-instance_of->': 'mapping',
+                        '<-has_mapping-': 'create_next_sequence_item_rule_template',
+                        '-defined_by:to_all->': {
+                            '?unknown_sequence_item': {
+                                '-becomes->': 'known_sequence_item'
                             }
-                        },
-                        '-has_mapping->': {
-                            'known_next_item': {},
-                            '?unknown_next_item': {
-                                '-becomes->': 'known_next_item'
+                        }
+                    },
+                    'create_next_sequence_item_rule_template-conclusion': {
+                        '-instance_of->': 'conclusion',
+                        '<-has_conclusion-': 'create_next_sequence_item_rule_template',
+                        '-defined_by:to_all->': {
+                            'get_next_sequence_item_rule': {
+                                '-instance_of->': 'rule',
+                                '-defined_by:to_all->': {
+                                    'get_next_sequence_item_rule-hypothesis': {
+                                        '-instance_of->': 'hypothesis',
+                                        '<-has_hypothesis-': 'get_next_sequence_item_rule',
+                                        '-defined_by:to_all->': {
+                                            'known_sequence_item': {
+                                                '-next->': '?unknown_next_item'
+                                            }
+                                        }
+                                    },
+                                    'get_next_sequence_item_rule-mapping': {
+                                        '-instance_of->': 'mapping',
+                                        '<-has_mapping-': 'get_next_sequence_item_rule',
+                                        '-defined_by:to_all->': {
+                                            '?unknown_next_item': {
+                                                '-becomes->': 'known_next_item'
+                                            }
+                                        }
+                                    },
+                                    'get_next_sequence_item_rule-conclusion': {
+                                        '-instance_of->': 'conclusion',
+                                        '<-has_conclusion-': 'get_next_sequence_item_rule',
+                                        '-defined_by:to_all->': {
+                                            'known_next_item': {}
+                                        }
+                                    }
+                                }
                             }
-                        },
-                        '-has_conclusion->': {
-                            'known_next_item': {}
                         }
                     }
                 }

@@ -13,22 +13,34 @@ describe('Basic Rules', () => {
         // Rule: everything that is light blue is also blue
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "blue_rule": {
-                '-has_hypothesis->': {
-                    "light_blue": {},
-                    '?unknown_001': {
-                        '-attr->': "light_blue"
-                    }
-                },
-                '-has_mapping->': {
-                    'known_001': {},
-                    '?unknown_001': {
-                        '-becomes->': 'known_001'
-                    }
-                },
-                '-has_conclusion->': {
-                    "blue": {},
-                    'known_001': {
-                        '-attr->': "blue"
+                '-instance_of->': 'rule',
+                '-defined_by:to_all->': {
+                    'blue_rule-hypothesis': {
+                        '-instance_of->': 'hypothesis',
+                        '<-has_hypothesis-': 'blue_rule',
+                        '-defined_by:to_all->': {
+                            '?unknown_001': {
+                                '-attr->': "light_blue"
+                            }
+                        }
+                    },
+                    'blue_rule-mapping': {
+                        '-instance_of->': 'mapping',
+                        '<-has_mapping-': 'blue_rule',
+                        '-defined_by:to_all->': {
+                            '?unknown_001': {
+                                '-becomes->': 'known_001'
+                            }
+                        }
+                    },
+                    'blue_rule-conclusion': {
+                        '-instance_of->': 'conclusion',
+                        '<-has_conclusion-': 'blue_rule',
+                        '-defined_by:to_all->': {
+                            'known_001': {
+                                '-attr->': "blue"
+                            }
+                        }
                     }
                 }
             }
@@ -48,25 +60,36 @@ describe('Basic Rules', () => {
         // Rule: everything that is light blue is also blue
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "blue_rule": {
-                '-has_hypothesis->': {
-                    "light_blue": {},
-                    '?unknown_001': {
-                        '-attr->': "light_blue"
-                    }
-                },
-                '-has_mapping->': {
-                    'known_001': {},
-                    '?unknown_001': {
-                        '-becomes->': 'known_001'
-                    }
-                },
-                '-has_conclusion->': {
-                    "blue": {},
-                    'known_001': {
-                        '-attr->': "blue"
+                '-instance_of->': 'rule',
+                '-defined_by:to_all->': {
+                    'blue_rule-hypothesis': {
+                        '-instance_of->': 'hypothesis',
+                        '<-has_hypothesis-': 'blue_rule',
+                        '-defined_by:to_all->': {
+                            '?unknown_001': {
+                                '-attr->': "light_blue"
+                            }
+                        }
+                    },
+                    'blue_rule-mapping': {
+                        '-instance_of->': 'mapping',
+                        '<-has_mapping-': 'blue_rule',
+                        '-defined_by:to_all->': {
+                            '?unknown_001': {
+                                '-becomes->': 'known_001'
+                            }
+                        }
+                    },
+                    'blue_rule-conclusion': {
+                        '-instance_of->': 'conclusion',
+                        '<-has_conclusion-': 'blue_rule',
+                        '-defined_by:to_all->': {
+                            'known_001': {
+                                '-attr->': "blue"
+                            }
+                        }
                     }
                 }
-
             }
         })
         // Argument: sky is blue
@@ -84,27 +107,38 @@ describe('Basic Rules', () => {
         // Rule: if sky has an attribute then a cloud has the same attribute
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "blue_rule": {
-                '-has_hypothesis->': {
-                    '?attribute_001': {},
-                    'sky': {
-                        '-attr->': "?attribute_001"
-                    }
-                },
-                '-has_mapping->': {
-                    'attribute_002': {},
-                    '?attribute_001': {
-                        '-becomes->': 'attribute_002'
-                    }
-                },
-                '-has_conclusion->': {
-                    "?attribute_002": {},
-                    'cloud': {
-                        '-attr->': {
-                            "?attribute_002": {}
+                '-instance_of->': 'rule',
+                '-defined_by:to_all->': {
+                    'blue_rule-hypothesis': {
+                        '-instance_of->': 'hypothesis',
+                        '<-has_hypothesis-': 'blue_rule',
+                        '-defined_by:to_all->': {
+                            'sky': {
+                                '-attr->': "?attribute_001"
+                            }
+                        }
+                    },
+                    'blue_rule-mapping': {
+                        '-instance_of->': 'mapping',
+                        '<-has_mapping-': 'blue_rule',
+                        '-defined_by:to_all->': {
+                            '?attribute_001': {
+                                '-becomes->': 'attribute_002'
+                            }
+                        }
+                    },
+                    'blue_rule-conclusion': {
+                        '-instance_of->': 'conclusion',
+                        '<-has_conclusion-': 'blue_rule',
+                        '-defined_by:to_all->': {
+                            'cloud': {
+                                '-attr->': {
+                                    "?attribute_002": {}
+                                }
+                            }
                         }
                     }
                 }
-
             }
         })
         // Argument: sky is blue
@@ -121,29 +155,39 @@ describe('Basic Rules', () => {
         // Rule: if anything has an attribute, anything is attribute
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "blue_rule": {
-                '-has_hypothesis->': {
-                    "?unknown_attribute_001": {},
-                    '?unknown_001': {
-                        '-attr->': "?unknown_attribute_001"
-                    }
-                },
-                '-has_mapping->': {
-                    'known_001': {},
-                    '?unknown_001': {
-                        "-becomes->": 'known_001'
+                '-instance_of->': 'rule',
+                '-defined_by:to_all->': {
+                    'blue_rule-hypothesis': {
+                        '-instance_of->': 'hypothesis',
+                        '<-has_hypothesis-': 'blue_rule',
+                        '-defined_by:to_all->': {
+                            '?unknown_001': {
+                                '-attr->': "?unknown_attribute_001"
+                            }
+                        }
                     },
-                    'known_attribute_001': {},
-                    '?unknown_attribute_001': {
-                        "-becomes->": 'known_attribute_001'
-                    }
-                },
-                '-has_conclusion->': {
-                    "known_attribute_001": {},
-                    'known_001': {
-                        '-is->': "known_attribute_001"
+                    'blue_rule-mapping': {
+                        '-instance_of->': 'mapping',
+                        '<-has_mapping-': 'blue_rule',
+                        '-defined_by:to_all->': {
+                            '?unknown_001': {
+                                "-becomes->": 'known_001'
+                            },
+                            '?unknown_attribute_001': {
+                                "-becomes->": 'known_attribute_001'
+                            }
+                        }
+                    },
+                    'blue_rule-conclusion': {
+                        '-instance_of->': 'conclusion',
+                        '<-has_conclusion-': 'blue_rule',
+                        '-defined_by:to_all->': {
+                            'known_001': {
+                                '-is->': "known_attribute_001"
+                            }
+                        }
                     }
                 }
-
             }
         })
         // Argument: sky has attribute blue
@@ -161,29 +205,39 @@ describe('Basic Rules', () => {
         // Rule: if anything has an attribute, anything is attribute
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "parts_rule": {
-                '-has_hypothesis->': {
-                    "?unknown_collection_part": {},
-                    '?unknown_collection': {
-                        '-has_part->': "?unknown_collection_part"
-                    }
-                },
-                '-has_mapping->': {
-                    'known_collection': {},
-                    '?unknown_collection': {
-                        '-becomes->': 'known_collection'
+                '-instance_of->': 'rule',
+                '-defined_by:to_all->': {
+                    'parts_rule-hypothesis': {
+                        '-instance_of->': 'hypothesis',
+                        '<-has_hypothesis-': 'parts_rule',
+                        '-defined_by:to_all->': {
+                            '?unknown_collection': {
+                                '-has_part->': "?unknown_collection_part"
+                            }
+                        }
                     },
-                    'known_collection_part': {},
-                    '?unknown_collection_part': {
-                        '-becomes->': 'known_collection_part'
-                    }
-                },
-                '-has_conclusion->': {
-                    "known_collection": {},
-                    'known_collection_part': {
-                        '-part_of->': 'known_collection'
+                    'parts_rule-mapping': {
+                        '-instance_of->': 'mapping',
+                        '<-has_mapping-': 'parts_rule',
+                        '-defined_by:to_all->': {
+                            '?unknown_collection': {
+                                '-becomes->': 'known_collection'
+                            },
+                            '?unknown_collection_part': {
+                                '-becomes->': 'known_collection_part'
+                            },
+                        }
+                    },
+                    'parts_rule-conclusion': {
+                        '-instance_of->': 'conclusion',
+                        '<-has_conclusion-': 'parts_rule',
+                        '-defined_by:to_all->': {
+                            'known_collection_part': {
+                                '-part_of->': 'known_collection'
+                            }
+                        }
                     }
                 }
-
             }
         })
         // Argument: sky has attribute blue
@@ -217,29 +271,39 @@ describe('Basic Rules', () => {
 
         const rule: ConceptGraph = ConceptGraph.fromModel({
             "parts_rule": {
-                '-has_hypothesis->': {
-                    "?unknown_collection_part": {},
-                    '?unknown_collection': {
-                        '-has_part->': "?unknown_collection_part"
-                    }
-                },
-                '-has_mapping->': {
-                    'known_collection': {},
-                    '?unknown_collection': {
-                        '-becomes->': 'known_collection'
+                '-instance_of->': 'rule',
+                '-defined_by:to_all->': {
+                    'parts_rule-hypothesis': {
+                        '-instance_of->': 'hypothesis',
+                        '<-has_hypothesis-': 'parts_rule',
+                        '-defined_by:to_all->': {
+                            '?unknown_collection': {
+                                '-has_part->': "?unknown_collection_part"
+                            }
+                        }
                     },
-                    'known_collection_part': {},
-                    '?unknown_collection_part': {
-                        '-becomes->': 'known_collection_part'
-                    }
-                },
-                '-has_conclusion->': {
-                    "known_collection": {},
-                    'known_collection_part': {
-                        '-part_of->': 'known_collection'
+                    'parts_rule-mapping': {
+                        '-instance_of->': 'mapping',
+                        '<-has_mapping-': 'parts_rule',
+                        '-defined_by:to_all->': {
+                            '?unknown_collection': {
+                                '-becomes->': 'known_collection'
+                            },
+                            '?unknown_collection_part': {
+                                '-becomes->': 'known_collection_part'
+                            }
+                        }
+                    },
+                    'parts_rule-conclusion': {
+                        '-instance_of->': 'conclusion',
+                        '<-has_conclusion-': 'parts_rule',
+                        '-defined_by:to_all->': {
+                            'known_collection_part': {
+                                '-part_of->': 'known_collection'
+                            }
+                        }
                     }
                 }
-
             }
         })
         // Argument: sky has attribute blue

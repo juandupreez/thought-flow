@@ -61,7 +61,7 @@ export class ControlUnit {
 
         const conceptIds: string[] = []
 
-        if (curOperationConceptId == null) {
+        if (curOperationConceptId === null) {
             const firstItemRule: ConceptGraph = await this.conceptGraphDao.getRuleByName('rule_get_first_sequence_item')
             glog().debug('---First Item Rule')
             glog().debug(firstItemRule.toStringifiedModel())
@@ -83,9 +83,9 @@ export class ControlUnit {
             glog().debug(nextOp.toStringifiedModel())
             conceptIds.push(...nextOp.getConceptIds())
         }
-        if (conceptIds.length == 0) {
+        if (conceptIds.length === 0) {
             throw new Error('Could not find first operation in procedure')
-        } else if (conceptIds.length == 1) {
+        } else if (conceptIds.length === 1) {
             return conceptIds[0]
         } else {
             throw new Error('Rule contains too many concept IDs: ' + JSON.stringify(conceptIds))

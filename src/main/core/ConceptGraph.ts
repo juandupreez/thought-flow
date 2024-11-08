@@ -193,7 +193,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         return curLevelConceptIds
     }
 
-    getConceptDefinition(sourceConceptId: string, shouldIncludeOriginalConcept?: boolean): ConceptGraph {
+    getConceptDefinition(sourceConceptId: string, shouldIncludeOriginalConcept: boolean = false): ConceptGraph {
         return this.getConceptDefinitionByRelationType(sourceConceptId, 'defined_by', shouldIncludeOriginalConcept)
     }
 
@@ -459,7 +459,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
             }
         })
     }
-    
+
     checkRequiredConceptIds(errorName: string, requiredConceptIds: string[]): ConceptGraph {
         const missingConceptIds: string[] = []
         const existingConceptIds: string[] = this.getConceptIds()
@@ -482,7 +482,7 @@ export class ConceptGraph extends Graph<Concept, Relation> {
             return ConceptGraph.fromModel(errorModel)
         }
     }
-    
+
     checkConceptIdDefinitions(errorName: string, requiredConceptIds: string[]): ConceptGraph {
         const conceptIdsMissingDefinitions: string[] = []
 
@@ -504,6 +504,41 @@ export class ConceptGraph extends Graph<Concept, Relation> {
             }
             return ConceptGraph.fromModel(errorModel)
         }
+    }
+
+    getFirstCgAndDefinitionByInstance(instanceConceptId: string, shouldIncludeOriginalConcept: boolean = false): ConceptGraph {
+        let cgWithDefinition: ConceptGraph = new ConceptGraph()
+        this.forEachEdge((relationId: string, relation: Relation, sourceConceptId: string, targetConceptId: string, sourceConcept: Concept, targetConcept: Concept) => {
+            if (relation.type === 'instance_of' && targetConceptId === instanceConceptId) {
+                cgWithDefinition = this.getConceptDefinition(sourceConceptId, shouldIncludeOriginalConcept)
+                if (shouldIncludeOriginalConcept) {
+                    cgWithDefinition.addConceptByIdIfNotExists(instanceConceptId, {
+                        description: instanceConceptId,
+                        isUnknown: false
+                    })
+                    cgWithDefinition.addRelationByTypeIfNotExists('instance_of', sourceConceptId, instanceConceptId)
+                }
+            }
+        })
+        return cgWithDefinition
+    }
+
+    getMergedCgsOfDefinitionByInstance(instanceConceptId: string, shouldIncludeOriginalConcept: boolean = false): ConceptGraph {
+        let cgsWithDefinition: ConceptGraph = new ConceptGraph()
+        this.forEachEdge((relationId: string, relation: Relation, sourceConceptId: string, targetConceptId: string, sourceConcept: Concept, targetConcept: Concept) => {
+            if (relation.type === 'instance_of' && targetConceptId === instanceConceptId) {
+                const cgWithDefinition = this.getConceptDefinition(sourceConceptId, shouldIncludeOriginalConcept)
+                if (shouldIncludeOriginalConcept) {
+                    cgWithDefinition.addConceptByIdIfNotExists(instanceConceptId, {
+                        description: instanceConceptId,
+                        isUnknown: false
+                    })
+                    cgWithDefinition.addRelationByTypeIfNotExists('instance_of', sourceConceptId, instanceConceptId)
+                }
+                cgsWithDefinition.mergeFrom(cgWithDefinition)
+            }
+        })
+        return cgsWithDefinition
     }
 
     toString(): string {
