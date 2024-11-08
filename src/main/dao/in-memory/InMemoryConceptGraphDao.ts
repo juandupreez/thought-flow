@@ -19,11 +19,11 @@ export class InMemoryConceptGraphDao implements ConceptGraphDao {
         this.conceptGraphDb.mergeFrom(ConceptGraph.fromModel(cgModel))
     }
 
-    async getRuleByName(rule_name: string): Promise<ConceptGraph> {
+    async getRuleByName(ruleName: string): Promise<ConceptGraph> {
         const foundRule: ConceptGraph = new ConceptGraph()
 
         const ruleStructureModel: ConceptGraphModel = {}
-        ruleStructureModel[rule_name] = {
+        ruleStructureModel[ruleName] = {
             '-has_hypothesis->': '?unknown_hypothesis',
             '-has_mapping->': '?unknown_mapping',
             '-has_conclusion->': '?unknown_conclusion'
@@ -33,23 +33,14 @@ export class InMemoryConceptGraphDao implements ConceptGraphDao {
         const potentialRule: ConceptGraph = this.conceptMatchService.getAndMergeMatches(ruleStructure, this.conceptGraphDb)
 
         foundRule.mergeFrom(potentialRule)
-        const potentialHypothesis: ConceptGraph = this.conceptGraphDb.getConceptDefinitionByRelationType(rule_name, 'has_hypothesis', true)
+        const potentialHypothesis: ConceptGraph = this.conceptGraphDb.getConceptDefinitionByRelationType(ruleName, 'has_hypothesis', true)
         foundRule.mergeFrom(potentialHypothesis)
-        const potentialMapping: ConceptGraph = this.conceptGraphDb.getConceptDefinitionByRelationType(rule_name, 'has_mapping', true)
+        const potentialMapping: ConceptGraph = this.conceptGraphDb.getConceptDefinitionByRelationType(ruleName, 'has_mapping', true)
         foundRule.mergeFrom(potentialMapping)
-        const potentialConclusion: ConceptGraph = this.conceptGraphDb.getConceptDefinitionByRelationType(rule_name, 'has_conclusion', true)
+        const potentialConclusion: ConceptGraph = this.conceptGraphDb.getConceptDefinitionByRelationType(ruleName, 'has_conclusion', true)
         foundRule.mergeFrom(potentialConclusion)
 
-        if (foundRule.isEmpty()) {
-            return ConceptGraph.fromModel({
-                'no_such_rule_error': {
-                    '-instance_of->': 'error',
-                    '-has_message->': `Could not find rule by name: ${rule_name}`
-                }
-            })
-        } else {
-            return foundRule
-        }
+        return foundRule
     }
 
     async createConceptIfNotExists(conceptId: string): Promise<void> {

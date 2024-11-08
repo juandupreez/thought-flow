@@ -5,6 +5,7 @@ import { Concept } from "../model/Concept"
 import { ConceptGraphModel } from "../model/ConceptGraphModel"
 import { Operation } from "../operations/Operation"
 import { ApplyRuleOp } from "../operations/impl/ApplyRuleOp"
+import { ApplyTemplateRuleOp } from "../operations/impl/ApplyTemplateRuleOp"
 import { ErrorOp } from "../operations/impl/ErrorOp"
 import { FetchOp } from "../operations/impl/FetchOp"
 import { HaltOp } from "../operations/impl/HaltOp"
@@ -114,6 +115,8 @@ export class ControlUnit {
                     return new FetchOp()
                 case 'ApplyRuleOp':
                     return new ApplyRuleOp()
+                case 'ApplyTemplateRuleOp':
+                    return new ApplyTemplateRuleOp()
                 case 'PrintConceptsOp':
                     return new PrintConceptsOp()
                 default:

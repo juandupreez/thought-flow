@@ -1,22 +1,34 @@
 import { ConceptGraph } from "../../core/ConceptGraph";
 import { ConceptGraphDao } from "../../dao/ConceptGraphDao";
+import { glog } from "../../util/Logger";
 import { Operation } from "../Operation";
 
 export class FetchOp implements Operation {
     async execute(args: ConceptGraph, workingMemory: ConceptGraph, conceptGraphDao: ConceptGraphDao): Promise<ConceptGraph> {
+        const potentialError: ConceptGraph = args.checkConceptIdDefinitions('fetch_op_error', [
+            'fetch_op_arg-query',
+            'fetch_op_arg-result_slot'
+        ])
+        if (!potentialError.isEmpty()) {
+            return potentialError
+        }
 
-
-        const query: ConceptGraph = args.getConceptDefinition('query')
-        const workingMemorySlotConceptId: string | undefined = args.getConceptDefinition('working_memory_slot').getConceptIds()[0]
-        if (workingMemorySlotConceptId === undefined) {
+        const query: ConceptGraph = args.getConceptDefinition('fetch_op_arg-query')
+        const workingMemorySlotConceptId: string = args.getConceptDefinition('fetch_op_arg-result_slot').getConceptIds()[0]
+        
+        const fetchedCg: ConceptGraph = await conceptGraphDao.findAndMergeMatches(query)
+        if (fetchedCg.isEmpty()) {
+            glog().debug(query.toString())
             return ConceptGraph.fromModel({
                 'fetch_op_error': {
                     '-instance_of->': 'error',
-                    '-has_message->': `missing required argument "working_memory_slot". Should be something like {"working_memory_slot": {"-defined_by->": "slot_000"}}`
+                    '-has_message->': `query returned empty result`
                 }
             })
         }
-        const fetchedCg: ConceptGraph = await conceptGraphDao.findAndMergeMatches(query)
+        glog().info('\tresult found. saving to slot:  ' + workingMemorySlotConceptId)
+
+
         workingMemory.forceDeleteConceptAndRelations(workingMemorySlotConceptId)
         fetchedCg.wrapAsDefinitionOf(workingMemorySlotConceptId)
         workingMemory.mergeFrom(fetchedCg)

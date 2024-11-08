@@ -4,6 +4,7 @@ import { Relation } from "../model/Relation"
 import { IdGenerator } from "../util/IdGenerator"
 import { ConceptGraphModel, RelationKeyWithArrows } from "../model/ConceptGraphModel"
 import { isConceptUnknown, parseConceptIdAndIsUnknown } from "../util/common"
+import { glog } from "../util/Logger"
 
 export class ConceptGraph extends Graph<Concept, Relation> {
     getConcepts(): Concept[] {
@@ -192,8 +193,8 @@ export class ConceptGraph extends Graph<Concept, Relation> {
         return curLevelConceptIds
     }
 
-    getConceptDefinition(sourceConceptId: string): ConceptGraph {
-        return this.getConceptDefinitionByRelationType(sourceConceptId, 'defined_by')
+    getConceptDefinition(sourceConceptId: string, shouldIncludeOriginalConcept?: boolean): ConceptGraph {
+        return this.getConceptDefinitionByRelationType(sourceConceptId, 'defined_by', shouldIncludeOriginalConcept)
     }
 
     wrapAsDefinitionOf(conceptId: string) {
@@ -457,6 +458,52 @@ export class ConceptGraph extends Graph<Concept, Relation> {
                 })
             }
         })
+    }
+    
+    checkRequiredConceptIds(errorName: string, requiredConceptIds: string[]): ConceptGraph {
+        const missingConceptIds: string[] = []
+        const existingConceptIds: string[] = this.getConceptIds()
+
+        for (const requiredConceptId of requiredConceptIds) {
+            if (!existingConceptIds.includes(requiredConceptId)) {
+                missingConceptIds.push(requiredConceptId)
+            }
+        }
+
+        if (missingConceptIds.length === 0) {
+            return new ConceptGraph()
+        } else {
+            const errorModel: ConceptGraphModel = {}
+            glog().debug(this.toString())
+            errorModel[errorName] = {
+                '-instance_of->': 'error',
+                '-has_message->': `cannot find required conceptIds: ${missingConceptIds.join(', ')}`
+            }
+            return ConceptGraph.fromModel(errorModel)
+        }
+    }
+    
+    checkConceptIdDefinitions(errorName: string, requiredConceptIds: string[]): ConceptGraph {
+        const conceptIdsMissingDefinitions: string[] = []
+
+        for (const requiredConceptId of requiredConceptIds) {
+            const def: ConceptGraph = this.getConceptDefinition(requiredConceptId)
+            if (def.isEmpty()) {
+                conceptIdsMissingDefinitions.push(requiredConceptId)
+            }
+        }
+
+        if (conceptIdsMissingDefinitions.length === 0) {
+            return new ConceptGraph()
+        } else {
+            const errorModel: ConceptGraphModel = {}
+            glog().debug(this.toString())
+            errorModel[errorName] = {
+                '-instance_of->': 'error',
+                '-has_message->': `cannot find required definition of conceptIds: ${conceptIdsMissingDefinitions.join(', ')}`
+            }
+            return ConceptGraph.fromModel(errorModel)
+        }
     }
 
     toString(): string {

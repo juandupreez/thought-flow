@@ -96,3 +96,105 @@ For example, print all letters in "sky"
 
 
 
+
+
+
++ -> One or More (at least one)
+? -> Zero or one (at most one)
+* -> Zero or More (any amount)
+{3} -> Exactly Three
+{2,4} -> 2 to 4 times
+{3,} -> Three or More (at least three)
+
+
+ruleStructureModel[ruleName] = {
+            '-has_hypothesis->': {
+                'at_least_one:unknown_hypothesis_item': {
+                    '-?->': {
+                        'zero_or_more:other_hypothesis_item': {
+                            '<-has_hypothesis-': ruleName
+                        }
+                    }
+                }
+            },
+            '-has_mapping->': {
+                'at_least_one:unknown_mapping': {
+                    '-?->': {
+                        'zero_or_more:other_mapping_item': {
+                            '<-has_mapping-': ruleName
+                        }
+                    }
+                }
+            },
+            '-has_conclusion->': 'at_least_one:unknown_conclusion'
+        }
+
+
+
+Existing rule structure
+{
+    "rule_get_first_sequence_item": {
+        "-instance_of->": "rule",
+        "-has_hypothesis:to_all->": {
+            "?unknown_collection": {
+                "-first->": "?unknown_sequence_item"
+            }
+        },
+        "-has_mapping:to_all->": {
+            "?unknown_sequence_item": {
+                "-becomes->": "?first_item"
+            }
+        },
+        "-has_conclusion:to_all->": {
+            "?first_item": {}
+        }
+    }
+}
+
+Proposed:
+{
+    "rule_get_first_sequence_item": {
+        "-instance_of->": "rule",
+        "-defined_by:to_all->": {
+            "rule_get_first_sequence_item-hypothesis": {
+                "-instance_of->": "rule_hypothesis",
+                "-defined_by:to_all->": {
+                    "?unknown_collection": {
+                        "-first->": "?unknown_sequence_item"
+                    }
+                }
+            },
+            "rule_get_first_sequence_item-mapping": {
+                "-instance_of->": "rule_mapping",
+                "-defined_by:to_all->": {
+                    "?unknown_sequence_item": {
+                        "-becomes->": "?first_item"
+                    }
+                }
+            },
+            "rule_get_first_sequence_item-coclusion": {
+                "-instance_of->": "rule_coclusion",
+                "-defined_by:to_all->": {
+                    "first_item": {}
+                }
+            }
+        }
+    }
+}
+
+For language:
+Rule rule_get_first_sequence_item {
+    Hypothesis {
+        "at_least_one:unknown_collection": {
+            "-first->": "1:unknown_sequence_item"
+        }
+    }
+    Mapping {
+        "unknown_sequence_item": {
+            "-becomes->": "first_item"
+        }
+    }
+    Conclusion {
+        "first_item": {}
+    }
+}

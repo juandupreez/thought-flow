@@ -1,5 +1,6 @@
 {
     "word_sky": {
+        "-instance_of->": "word",
         "-has_part->": {
             "s_in_sky": {
                 "<-first-": "word_sky",
